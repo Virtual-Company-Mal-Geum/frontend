@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GEOproject — 결과 조회</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="bg-gradient" id="bgGradient"></div>
+
+  <header class="site-header">
+    <div class="logo" onclick="location.href='main.html'" style="cursor:pointer">
+      <span class="logo-mark">logo</span>
+      <span class="logo-text">TEST</span>
+    </div>
+    <nav class="site-nav">
+  <button class="btn-nav" onclick="location.href='index.html'">HOME</button>
+</nav>
+  </header>
+
+  <section class="hero">
+    <h1 class="hero-title"><em>CHECK YOUR RESULT</em></h1>
+    <p class="hero-sub">
+      등록하신 이메일 또는 전화번호를 입력하시면<br />
+      분석 결과 페이지로 이동합니다.
+    </p>
+
+    <div class="search-wrap">
+      <div class="search-bar" id="lookupBar">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          id="lookupInput"
+          class="search-input"
+          placeholder=""
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="search-btn" id="lookupBtn">
+          <span class="btn-label">CHECK</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+      <p id="lookupError" class="lookup-error hidden">일치하는 정보를 찾을 수 없습니다.</p>
+    </div>
+  </section>
+
+  <style>
+    .lookup-error {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent-red);
+      text-align: center;
+      margin-top: 12px;
+      animation: fade-up 0.3s ease both;
+    }
+  </style>
+
+  <script>
+    // ── 목업 DB ───────────────────────────────────
+    // 실제 연동 시 이 부분을 API 호출로 교체하세요
+    const mockDB = [
+      { email: 'test@gmail.com',  tel: '010-1234-5678', url: 'vercel.com'  },
+      { email: 'hello@naver.com', tel: '010-9999-0000', url: 'coupang.com' },
+      { email: 'demo@kakao.com',  tel: '010-5555-1234', url: 'notion.so'   },
+    ];
+
+    function lookup(value) {
+      const v = value.trim().toLowerCase();
+      return mockDB.find(row =>
+        row.email.toLowerCase() === v || row.tel === v
+      );
+    }
+
+    document.getElementById('lookupBtn').addEventListener('click', () => {
+      const val = document.getElementById('lookupInput').value.trim();
+      const error = document.getElementById('lookupError');
+
+      if (!val) {
+        document.getElementById('lookupBar').style.borderColor = 'var(--accent-red)';
+        setTimeout(() => document.getElementById('lookupBar').style.borderColor = '', 1000);
+        return;
+      }
+
+      const result = lookup(val);
+
+      if (result) {
+        error.classList.add('hidden');
+        window.location.href = `result.html?url=${encodeURIComponent(result.url)}`;
+      } else {
+        error.classList.remove('hidden');
+        document.getElementById('lookupBar').style.borderColor = 'var(--accent-red)';
+        setTimeout(() => document.getElementById('lookupBar').style.borderColor = '', 1000);
+      }
+    });
+
+    document.getElementById('lookupInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('lookupBtn').click();
+    });
+  </script>
+<script>
+  const bg = document.getElementById('bgGradient');
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth  * 100).toFixed(1);
+    const y = (e.clientY / window.innerHeight * 100).toFixed(1);
+    bg.style.background = `
+      radial-gradient(
+        600px circle at ${x}% ${y}%,
+        rgba(255,255,255,0.04) 0%,
+        transparent 70%
+      )
+    `;
+  });
+</script>
+</body>
+</html>

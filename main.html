@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" />
+  <title>GEOproject</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="bg-gradient" id="bgGradient"></div>
+  <div class="noise"></div>
+
+  <header class="site-header">
+    <div class="logo">
+      <span class="logo-mark">logo</span>
+      <span class="logo-text">TEST</span>
+    </div>
+    <nav class="site-nav">
+  <button class="btn-nav" onclick="location.href='index.html'">HOME</button>
+</nav>
+  </header>
+
+  <section class="hero">
+    <h1 class="hero-title">
+      Just paste <em>URL</em><br />
+      and discover
+    </h1>
+    <p class="hero-sub">
+      url을 입력하고 확인하세요 설명 어쩌구
+    </p>
+    <div class="search-wrap">
+
+  <!-- Step 1: URL -->
+  <div class="search-bar" id="searchBar">
+    <span class="search-icon">⌕</span>
+    <input
+      type="text"
+      id="urlInput"
+      class="search-input"
+      placeholder=""
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button class="search-btn" id="analyzeBtn">
+      <span class="btn-label">START</span>
+      <span class="btn-arrow">→</span>
+    </button>
+  </div>
+
+  <!-- Step 2~5: 순차적으로 나타나는 입력 필드 -->
+  <div class="extra-fields" id="extraFields"></div>
+
+  <!-- 최종 제출 버튼 -->
+  <button class="submit-btn hidden" id="submitBtn">
+    Start Analysis →
+  </button>
+
+</div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+  </footer>
+
+  <script>
+  const steps = [
+    { id: 'clientName',   label: '고객사 이름',    placeholder: 'Acme Corp' },
+    { id: 'managerName',  label: '담당자 이름',    placeholder: '홍길동' },
+    { id: 'managerTel',   label: '담당자 전화번호', placeholder: '010-0000-0000' },
+    { id: 'managerEmail', label: '담당자 이메일',   placeholder: 'name@email.com' },
+  ];
+
+  let currentStep = 0;
+
+  function showNextField() {
+    if (currentStep >= steps.length) {
+      const btn = document.getElementById('submitBtn');
+      btn.classList.remove('hidden');
+      setTimeout(() => btn.classList.add('visible'), 20);
+      return;
+    }
+
+    const step = steps[currentStep];
+    currentStep++;
+
+    const container = document.getElementById('extraFields');
+    const div = document.createElement('div');
+    div.className = 'extra-field';
+    div.innerHTML = `
+      <span class="field-label">${step.label}</span>
+      <input
+        type="text"
+        id="${step.id}"
+        class="field-input"
+        placeholder="${step.placeholder}"
+        autocomplete="off"
+      />
+    `;
+    container.appendChild(div);
+    setTimeout(() => div.classList.add('visible'), 20);
+
+    const input = div.querySelector('input');
+    input.focus();
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && input.value.trim()) {
+        showNextField();
+      }
+    });
+  }
+
+  document.getElementById('analyzeBtn').addEventListener('click', () => {
+    const val = document.getElementById('urlInput').value.trim();
+    if (!val) {
+      document.getElementById('searchBar').style.borderColor = 'var(--accent-red)';
+      setTimeout(() => document.getElementById('searchBar').style.borderColor = '', 1000);
+      return;
+    }
+    document.getElementById('analyzeBtn').disabled = true;
+    showNextField();
+  });
+
+  document.getElementById('urlInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('analyzeBtn').click();
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    const url = document.getElementById('urlInput').value.trim();
+    const encoded = encodeURIComponent(url);
+    window.location.href = `confirm.html`;
+  });
+</script>
+<script>
+  const bg = document.getElementById('bgGradient');
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth  * 100).toFixed(1);
+    const y = (e.clientY / window.innerHeight * 100).toFixed(1);
+    bg.style.background = `
+      radial-gradient(
+        600px circle at ${x}% ${y}%,
+        rgba(255,255,255,0.04) 0%,
+        transparent 70%
+      )
+    `;
+  });
+</script>
+</body>
+</html>

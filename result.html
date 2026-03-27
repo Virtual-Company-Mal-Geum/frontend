@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Result</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="bg-gradient" id="bgGradient"></div>
+  <header class="site-header result-header">
+    <div class="logo" id="backBtn" style="cursor:pointer">
+  <span class="logo-mark">logo</span>
+  <span class="logo-text">TEST</span>
+</div>
+    <div class="result-url-badge">
+      <span class="dot-live"></span>
+      <span id="resultUrlLabel">—</span>
+    </div>
+    <nav class="site-nav">
+  <button class="btn-nav" onclick="location.href='index.html'">HOME</button>
+</nav>
+  </header>
+
+  <div id="loadingState" class="loading-state">
+    <div class="loading-ring"></div>
+    <p class="loading-text">loading<span class="ellipsis"></span></p>
+  </div>
+
+  <div id="resultContent" class="result-content hidden">
+
+    <div class="summary-strip">
+      <div class="summary-card">
+        <span class="summary-label">GEO Score</span>
+        <span class="summary-value" id="geoScore">—</span>
+        <span class="summary-unit">/ 100</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Markets Reached</span>
+        <span class="summary-value" id="marketsCount">—</span>
+        <span class="summary-unit">countries</span>
+      </div>
+      <div class="summary-card">
+  <span class="summary-label">Top Gender</span>
+  <span class="summary-value small" id="topGender">—</span>
+</div>
+<div class="summary-card">
+  <span class="summary-label">Top Age Group</span>
+  <span class="summary-value small" id="topAge">—</span>
+</div>
+      <div class="summary-card">
+        <span class="summary-label">Opportunity Index</span>
+        <span class="summary-value accent" id="oppIndex">—</span>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box wide">
+        <div class="chart-box-header">
+          <span class="chart-title">Regional Market Share</span>
+          <span class="chart-sub">Traffic distribution by geo zone</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="pieChart"></canvas>
+          <div class="pie-legend" id="pieLegend"></div>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-box-header">
+          <span class="chart-title">Competitive Score by Region</span>
+          <span class="chart-sub">0–100 index</span>
+        </div>
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="chart-box-header">
+          <span class="chart-title">Monthly Trend</span>
+          <span class="chart-sub">Visibility score — last 12 months</span>
+        </div>
+        <canvas id="lineChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-box-header">
+          <span class="chart-title">Top Competitor Overlap</span>
+          <span class="chart-sub">Shared keyword territory (%)</span>
+        </div>
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+  const bg = document.getElementById('bgGradient');
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth  * 100).toFixed(1);
+    const y = (e.clientY / window.innerHeight * 100).toFixed(1);
+    bg.style.background = `
+      radial-gradient(
+        600px circle at ${x}% ${y}%,
+        rgba(255,255,255,0.04) 0%,
+        transparent 70%
+      )
+    `;
+  });
+</script>
+</body>
+</html>
