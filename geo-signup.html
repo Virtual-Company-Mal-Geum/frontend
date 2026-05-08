@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO — 회원가입</title>
+
+<link rel="stylesheet" href="geo-styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <a href="geo-index.html" class="geo-logo">GE<span>O</span></a>
+  <div class="topbar-right">이미 계정이 있으신가요? <a href="geo-login.html">로그인</a></div>
+</div>
+
+<div class="progress-bar">
+  <div class="prog-step active" id="step1"><div class="prog-dot">1</div>계정 정보</div>
+  <div class="prog-line" id="line1"></div>
+  <div class="prog-step" id="step2"><div class="prog-dot">2</div>URL 입력</div>
+  <div class="prog-line" id="line2"></div>
+  <div class="prog-step" id="step3"><div class="prog-dot">3</div>약관 동의</div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div class="page-title">GEO-MINI</div>
+  </div>
+  <br>
+  </div>
+
+  <form id="signupForm">
+
+    <!-- STEP 01 -->
+    <div class="form-card">
+      <div class="card-section-title">계정 정보 <span>STEP 01</span></div>
+      <div class="field-row-2">
+        <div class="field">
+          <label>성<span class="req">*</span></label>
+          <div class="input-wrap"><input type="text"></div>
+        </div>
+        <div class="field">
+          <label>이름<span class="req">*</span></label>
+          <div class="input-wrap"><input type="text"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>이메일<span class="req">*</span></label>
+        <div class="input-wrap"><span class="input-icon">✉</span><input type="email" required></div>
+      </div>
+      <div class="field">
+        <label>소속 기관 / 회사</label>
+        <div class="input-wrap"><span class="input-icon">🏢</span><input type="text"></div>
+      </div>
+      <div class="field">
+        <label>주요 활용 목적</label>
+        <div class="input-wrap">
+          <span class="input-icon">📋</span>
+          <select>
+            <option value="">선택해 주세요</option>
+            <option>쇼핑몰 / 이커머스</option>
+            <option>뉴스 / 미디어</option>
+            <option>SaaS / 테크</option>
+            <option>교육 / 학술</option>
+            <option>의료 / 헬스케어</option>
+            <option>로컬 비즈니스</option>
+            <option>기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>비밀번호<span class="req">*</span></label>
+        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="pwInput" placeholder="8자 이상 입력" required></div>
+        <div class="pw-strength">
+          <div class="pw-bar" id="pw1"></div>
+          <div class="pw-bar" id="pw2"></div>
+          <div class="pw-bar" id="pw3"></div>
+          <div class="pw-bar" id="pw4"></div>
+          <span class="pw-label" id="pwLabel"></span>
+        </div>
+      </div>
+      <div class="field">
+        <label>비밀번호 확인<span class="req">*</span></label>
+        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" placeholder="비밀번호를 다시 입력" required></div>
+      </div>
+    </div>
+
+    <!-- STEP 02 -->
+    <div class="form-card">
+      <div class="card-section-title">분석할 URL 입력 <span>STEP 02</span></div>
+      <div class="field">
+        <label>분석 대상 URL<span class="req">*</span></label>
+        <div class="input-wrap url-wrap">
+          <span class="input-icon" style="color:var(--accent);font-size:0.8rem;">🔗</span>
+          <input type="url" id="targetUrl" placeholder="https://example.com/page" required>
+        </div>
+        <div style="margin-top:8px;font-size:0.75rem;color:var(--gray-400);display:flex;align-items:center;gap:5px;">
+          <span style="color:var(--accent);font-family:var(--font-mono);font-size:0.68rem;background:var(--blue-50);padding:1px 6px;border-radius:4px;">JSON-LD</span>
+          스키마가 포함된 페이지 URL을 입력하세요.
+        </div>
+      </div>
+      <div class="field">
+        <label>페이지 유형</label>
+        <div class="input-wrap">
+          <span class="input-icon">📋</span>
+          <select>
+            <option value="">선택해 주세요 (선택)</option>
+            <option>상품 페이지 (Product)</option>
+            <option>뉴스 / 블로그 (Article)</option>
+            <option>FAQ 페이지 (FAQPage)</option>
+            <option>기업 소개 (Organization)</option>
+            <option>로컬 비즈니스 (LocalBusiness)</option>
+            <option>강의 / 교육 (Course)</option>
+            <option>기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>추가 요청 사항</label>
+        <div class="input-wrap" style="position:relative;">
+          <textarea id="memo" placeholder="특별히 분석 받고 싶은 부분이나 요청 사항을 입력해 주세요." style="
+            width:100%;
+            min-height:90px;
+            padding:12px 14px;
+            font-family:var(--font-body);
+            font-size:0.875rem;
+            background:var(--gray-100);
+            border:1.5px solid var(--gray-200);
+            border-radius:var(--radius-sm);
+            color:var(--blue-900);
+            outline:none;
+            resize:vertical;
+            line-height:1.6;
+            transition:border-color var(--transition-base),box-shadow var(--transition-base);
+          " onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 4px rgba(0,153,255,0.08)';this.style.background='var(--white)'"
+             onblur="this.style.borderColor='var(--gray-200)';this.style.boxShadow='none';this.style.background='var(--gray-100)'"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 03 -->
+    <div class="form-card">
+      <div class="card-section-title">약관 동의 <span>STEP 03</span></div>
+      <div class="terms-block">
+        <div class="terms-check"><input type="checkbox" id="allAgree"><label for="allAgree" style="font-weight:600;color:var(--blue-900)">전체 동의</label></div>
+        <div class="terms-check"><input type="checkbox" class="sub-agree" required><label>이용약관에 동의합니다 (필수) <a href="#">보기</a></label></div>
+        <div class="terms-check"><input type="checkbox" class="sub-agree" required><label>개인정보 처리방침에 동의합니다 (필수) <a href="#">보기</a></label></div>
+        <div class="terms-check"><input type="checkbox" class="sub-agree"><label>마케팅 정보 수신에 동의합니다 (선택) <a href="#">보기</a></label></div>
+      </div>
+      <button class="btn btn-submit" type="submit">계정 만들기 →</button>
+    </div>
+
+  </form>
+</main>
+
+<script src="geo-scripts.js"></script>
+</body>
+</html>

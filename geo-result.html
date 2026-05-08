@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO — 분석 결과</title>
+<link rel="stylesheet" href="geo-styles.css">
+</head>
+<body class="page-result">
+
+<div class="page-header">
+  <div class="ph-inner">
+    <a href="geo-personal.html" class="ph-back">← 대시보드로</a>
+    <div class="ph-title-block">
+      <div class="ph-title" id="ph-title">분석 결과 로딩 중...</div>
+    </div>
+    <div class="ph-actions">
+      <span class="ph-badge" id="ph-badge">● 로딩 중</span>
+      <button class="ph-btn">공유</button>
+      <button class="ph-btn primary">PDF 내보내기</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Meta strip -->
+  <div class="meta-strip">
+    <div class="meta-item"><span class="key">Order ID</span><span class="val" id="m-order-id">—</span></div>
+    <div class="meta-sep"></div>
+    <div class="meta-item"><span class="key">분석 URL</span><span class="val" id="m-url">—</span></div>
+    <div class="meta-sep"></div>
+    <div class="meta-item"><span class="key">상태</span><span class="val" id="m-status">—</span></div>
+    <div class="meta-sep"></div>
+    <div class="meta-item"><span class="key">완료 일시</span><span class="val" id="m-created-at">—</span></div>
+  </div>
+
+  <!-- 총점 KPI -->
+  <div class="kpi-row">
+    <div class="kpi-card" id="kpi-total">
+      <div class="kpi-label">총점</div>
+      <div class="kpi-val" id="kpi-total-val">—<span class="kpi-unit">/ 50</span></div>
+      <div class="kpi-change" id="kpi-total-grade">—</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-total-bar" style="width:0%;background:var(--accent)" data-w="0%"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Schema Completeness</div>
+      <div class="kpi-val" id="kpi-sc">—<span class="kpi-unit">/ 10</span></div>
+      <div class="kpi-change" id="kpi-sc-change">스키마 완전성</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-sc-bar" style="width:0%;background:var(--purple)" data-w="0%"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Information Density</div>
+      <div class="kpi-val" id="kpi-id">—<span class="kpi-unit">/ 10</span></div>
+      <div class="kpi-change" id="kpi-id-change">정보 밀도</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-id-bar" style="width:0%;background:var(--orange)" data-w="0%"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">GEO-Readiness</div>
+      <div class="kpi-val" id="kpi-geo">—<span class="kpi-unit">/ 10</span></div>
+      <div class="kpi-change" id="kpi-geo-change">AI 검색 적합성</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-geo-bar" style="width:0%;background:var(--green)" data-w="0%"></div></div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+
+    <!-- 레이더: 5개 지표 시각화 -->
+    <div class="chart-card span-6">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-card-title">GEO 종합 점수 레이더</div>
+          <div class="chart-card-sub">0 - 5</div>
+        </div>
+        <span class="chart-card-tag">RADAR</span>
+      </div>
+      <canvas id="radarChart" height="280"></canvas>
+    </div>
+
+    <!-- 바 차트: 5개 지표 점수 -->
+    <div class="chart-card span-6">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-card-title">지표별 점수 비교</div>
+          <div class="chart-card-sub">0 - 10</div>
+        </div>
+        <span class="chart-card-tag">BAR CHART</span>
+      </div>
+      <canvas id="barChart" height="280"></canvas>
+    </div>
+
+    <!-- 지표별 피드백 상세 -->
+    <div class="chart-card span-12">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-card-title">지표별 상세 피드백</div>
+          <div class="chart-card-sub">AI 분석 기반 항목별 개선 가이드</div>
+        </div>
+        <span class="chart-card-tag">FEEDBACK</span>
+      </div>
+      <div class="insight-list" id="feedbackList">
+        <div class="insight-item low">
+          <span class="insight-icon">⏳</span>
+          <div class="insight-text">분석 결과를 불러오는 중입니다...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 원본 JSON-LD -->
+    <div class="chart-card span-12">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-card-title">분석된 JSON-LD</div>
+          <div class="chart-card-sub">입력된 구조화 데이터 원문</div>
+        </div>
+        <span class="chart-card-tag">JSON-LD</span>
+      </div>
+      <pre id="jsonLdBlock" style="
+        background:var(--gray-100);
+        border-radius:10px;
+        padding:20px;
+        font-family:var(--font-mono);
+        font-size:0.78rem;
+        color:var(--blue-900);
+        overflow-x:auto;
+        line-height:1.7;
+        margin:0;
+        white-space:pre-wrap;
+        word-break:break-all;
+      ">—</pre>
+    </div>
+
+  </div>
+</div>
+
+<script src="geo-scripts.js"></script>
+</body>
+</html>

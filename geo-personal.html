@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO — 마이 대시보드</title>
+<link rel="stylesheet" href="geo-styles.css">
+</head>
+<body class="page-personal">
+
+<aside class="sidebar">
+  <a href="geo-index.html" class="sidebar-logo">GE<span>O</span></a>
+  <div class="sidebar-section">menu</div>
+  <nav class="sidebar-nav">
+    <a class="nav-item active" href="geo-personal.html"><span class="icon">📊</span> 대시보드</a>
+    <a class="nav-item" href="#"><span class="icon">📁</span> 내 의뢰<span class="nav-badge">8</span></a>
+    <div class="sidebar-section" style="padding-left:0;margin-top:12px">설정</div>
+    <a class="nav-item" href="#"><span class="icon">⚙️</span> 계정 설정</a>
+    <a class="nav-item" href="#"><span class="icon">💳</span> 플랜 관리</a>
+    <a class="nav-item" href="#"><span class="icon">🔔</span> 알림</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">기</div>
+      <div><div class="user-name">기캡이</div><div class="user-plan"></div></div>
+      <button class="logout-btn" onclick="window.location.href='geo-login.html'">로그아웃</button>
+    </div>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>내 대시보드</h1>
+      <p>안녕하세요, 기캡이님. 오늘도 좋은 최적화 되세요.</p>
+    </div>
+    <a href="#" class="btn-new"><span>+</span> 새 의뢰</a>
+  </div>
+
+  <div class="content">
+
+    <div class="stats-row">
+      <div class="stat-card c-blue"><div class="sc-icon">📁</div><div class="sc-val">8</div><div class="sc-label">전체 의뢰</div></div>
+      <div class="stat-card c-green"><div class="sc-icon">✅</div><div class="sc-val">5</div><div class="sc-label">완료된 분석</div></div>
+      <div class="stat-card c-orange"><div class="sc-icon">⏳</div><div class="sc-val">2</div><div class="sc-label">분석 진행 중</div></div>
+      <div class="stat-card c-purple"><div class="sc-icon">🗓️</div><div class="sc-val">3</div><div class="sc-label">이번 달 의뢰</div></div>
+    </div>
+
+    <div class="list-controls">
+      <div class="search-box">
+        <span style="color:var(--gray-400)">🔍</span>
+        <input type="text" placeholder="의뢰 검색..." oninput="filterProjects(this.value)">
+      </div>
+      <button class="filter-btn active" onclick="setFilter(this,'all')">전체</button>
+      <button class="filter-btn" onclick="setFilter(this,'done')">완료</button>
+      <button class="filter-btn" onclick="setFilter(this,'progress')">진행 중</button>
+      <button class="filter-btn" onclick="setFilter(this,'queued')">대기</button>
+    </div>
+
+    <div class="project-list" id="projectList">
+
+      <!-- done: 결과 보기 + 삭제 -->
+      <div class="project-row-wrap" data-status="done">
+        <a class="project-row" href="geo-result.html">
+          <div class="proj-icon geo">🧠</div>
+          <div class="proj-info">
+            <div class="proj-name">쇼핑몰 사이트 JSON-LD 스키마 전면 재설계</div>
+            <div class="proj-meta">Product · BreadcrumbList · Review 스키마 · AI 인용률 +42%</div>
+          </div>
+          <div class="proj-date">2025.06.12</div>
+          <span class="status-badge done">● 완료</span>
+        </a>
+        <div class="proj-actions">
+          <a href="geo-result.html" class="action-btn view">결과 보기</a>
+          <button class="action-btn del">삭제</button>
+        </div>
+      </div>
+
+      <!-- progress: 버튼 없음 -->
+      <div class="project-row-wrap" data-status="progress">
+        <div class="project-row">
+          <div class="proj-icon urban">🔗</div>
+          <div class="proj-info">
+            <div class="proj-name">테크 스타트업 엔티티 연결 및 지식 그래프 구축</div>
+            <div class="proj-meta">Organization · Person · SoftwareApplication · Wikidata 연결</div>
+          </div>
+          <div class="proj-date">2025.06.08</div>
+          <span class="status-badge progress">◉ 진행 중</span>
+        </div>
+      </div>
+
+      <!-- queued: 버튼 없음 -->
+      <div class="project-row-wrap" data-status="queued">
+        <div class="project-row">
+          <div class="proj-icon logi">📄</div>
+          <div class="proj-info">
+            <div class="proj-name">의료 정보 사이트 FAQ·MedicalCondition 스키마 최적화</div>
+            <div class="proj-meta">FAQPage · MedicalCondition · HowTo · E-E-A-T 강화</div>
+          </div>
+          <div class="proj-date">2025.06.01</div>
+          <span class="status-badge queued">◌ 대기 중</span>
+        </div>
+      </div>
+
+      <!-- done -->
+      <div class="project-row-wrap" data-status="done">
+        <a class="project-row" href="geo-result.html">
+          <div class="proj-icon env">📊</div>
+          <div class="proj-info">
+            <div class="proj-name">뉴스 미디어 Article 스키마 및 저자 엔티티 최적화</div>
+            <div class="proj-meta">NewsArticle · Person · Organization · Perplexity 인용 +67%</div>
+          </div>
+          <div class="proj-date">2025.05.20</div>
+          <span class="status-badge done">● 완료</span>
+        </a>
+        <div class="proj-actions">
+          <a href="geo-result.html" class="action-btn view">결과 보기</a>
+          <button class="action-btn del">삭제</button>
+        </div>
+      </div>
+
+      <!-- progress: 버튼 없음 -->
+      <div class="project-row-wrap" data-status="progress">
+        <div class="project-row">
+          <div class="proj-icon geo">🏗️</div>
+          <div class="proj-info">
+            <div class="proj-name">SaaS 플랫폼 전체 스키마 감사 및 재구조화</div>
+            <div class="proj-meta">SoftwareApplication · WebSite · SearchAction · HowTo 설계</div>
+          </div>
+          <div class="proj-date">2025.05.14</div>
+          <span class="status-badge progress">◉ 진행 중</span>
+        </div>
+      </div>
+
+      <!-- done -->
+      <div class="project-row-wrap" data-status="done">
+        <a class="project-row" href="geo-result.html">
+          <div class="proj-icon urban">🎓</div>
+          <div class="proj-info">
+            <div class="proj-name">교육 플랫폼 Course·LearningResource 스키마 구축</div>
+            <div class="proj-meta">Course · LearningResource · EducationalOrganization · ChatGPT 인용 확인</div>
+          </div>
+          <div class="proj-date">2025.04.30</div>
+          <span class="status-badge done">● 완료</span>
+        </a>
+        <div class="proj-actions">
+          <a href="geo-result.html" class="action-btn view">결과 보기</a>
+          <button class="action-btn del">삭제</button>
+        </div>
+      </div>
+
+      <!-- queued: 버튼 없음 -->
+      <div class="project-row-wrap" data-status="queued">
+        <div class="project-row">
+          <div class="proj-icon logi">🍽️</div>
+          <div class="proj-info">
+            <div class="proj-name">외식 프랜차이즈 LocalBusiness·Menu 스키마 설계</div>
+            <div class="proj-meta">LocalBusiness · Restaurant · Menu · GeoCoordinates 초안</div>
+          </div>
+          <div class="proj-date">2025.04.18</div>
+          <span class="status-badge queued">◌ 대기 중</span>
+        </div>
+      </div>
+
+      <!-- done -->
+      <div class="project-row-wrap" data-status="done">
+        <a class="project-row" href="geo-result.html">
+          <div class="proj-icon env">🛒</div>
+          <div class="proj-info">
+            <div class="proj-name">이커머스 Product 리뷰 스키마 전환 및 인용률 측정</div>
+            <div class="proj-meta">Product · AggregateRating · Offer · Gemini 스니펫 채택률 분석</div>
+          </div>
+          <div class="proj-date">2025.04.05</div>
+          <span class="status-badge done">● 완료</span>
+        </a>
+        <div class="proj-actions">
+          <a href="geo-result.html" class="action-btn view">결과 보기</a>
+          <button class="action-btn del">삭제</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="pagination">
+      <div class="page-info">총 8건 · 8건 표시 중</div>
+      <div class="page-btns">
+        <button class="page-btn">‹</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">›</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="geo-scripts.js"></script>
+</body>
+</html>

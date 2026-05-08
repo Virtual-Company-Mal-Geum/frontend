@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO — Geospatial Intelligence Platform</title>
+
+<link rel="stylesheet" href="geo-styles.css">
+</head>
+<body class="page-index">
+
+<nav class="geo-nav">
+  <a href="geo-index.html" class="geo-logo">GE<span>O</span></a>
+  <ul>
+    <li><a href="geo-login.html" class="btn-nav">로그인</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="hero-content">
+    <h1>JUST PASTE<br>YOUR<br><em>URL</em></h1>
+    <p class="hero-sub">JSON-LD 스키마 분석으로<br>
+      ChatGPT, Perplexity, Gemini로부터 내 사이트를 최적화하세요.<br>
+      생성형 AI 시대의 새로운 검색 최적화 전략입니다.</p>
+    <div class="hero-cta">
+    </div>
+     <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">4.2M+</div><div class="stat-label">분석된 스키마</div></div>
+      <div class="stat-item"><div class="stat-num">98.6%</div><div class="stat-label">인용 정확도</div></div>
+      <div class="stat-item"><div class="stat-num">120+</div><div class="stat-label">스키마 타입</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <canvas id="geoCanvas" class="geo-canvas"></canvas>
+  </div>
+</section>
+ 
+<section class="cards-section">
+  <div class="section-header">
+    <div>
+      <span class="section-tag">#</span>
+      <div class="section-title">GEO로 무엇을<br>개선할 수 있나요?</div>
+    </div>
+  </div>
+  <div class="cards-grid">
+ 
+    <div class="card card-featured reveal">
+      <div class="card-accent"></div><div class="card-num">01</div>
+      <div class="card-icon">🧠</div>
+      <h3>AI 검색 엔진 인용률 극대화</h3>
+      <p>ChatGPT, Perplexity, Gemini 등 생성형 AI가 사이트 콘텐츠를 직접 인용하도록 JSON-LD 스키마를 최적화합니다. 구조화된 데이터가 AI의 답변 소스로 채택될 확률을 높입니다.</p>
+         </div>
+ 
+    <div class="card reveal" style="transition-delay:.10s">
+      <div class="card-accent"></div><div class="card-num">02</div>
+      <div class="card-icon">🏗️</div>
+      <h3>스키마 구조 진단 및 재설계</h3>
+      <p>현재 사이트의 Schema.org 마크업을 분석하여 누락되거나 잘못 구현된 타입을 탐지하고, GEO에 최적화된 구조로 재설계합니다.</p>
+         </div>
+ 
+    <div class="card reveal" style="transition-delay:.15s">
+      <div class="card-accent"></div><div class="card-num">03</div>
+      <div class="card-icon">🔗</div>
+      <h3>엔티티 연결 및 지식 그래프 강화</h3>
+      <p>브랜드, 인물, 제품을 Wikidata·Google Knowledge Graph와 연결해 AI 모델이 신뢰할 수 있는 엔티티로 인식하도록 구성합니다.</p>
+   
+    </div>
+ 
+    <div class="card reveal" style="transition-delay:.20s">
+      <div class="card-accent"></div><div class="card-num">04</div>
+      <div class="card-icon">📄</div>
+      <h3>FAQ·HowTo 스키마 자동 생성</h3>
+      <p>기존 콘텐츠를 분석해 생성형 AI가 즉시 답변으로 활용하기 좋은 FAQ, HowTo, Q&A 스키마를 자동으로 생성하고 삽입합니다.</p>
+      
+    </div>
+ 
+    <div class="card reveal" style="transition-delay:.25s">
+      <div class="card-accent"></div><div class="card-num">05</div>
+      <div class="card-icon">📊</div>
+      <h3>GEO 성과 측정 및 리포트</h3>
+      <p>AI 검색 엔진별 인용 빈도, 출처 노출 순위, 스니펫 채택률을 추적하여 최적화 성과를 정량적으로 리포트합니다.</p>
+     
+    </div>
+ 
+  </div>
+</section>
+ 
+<section class="how-section">
+  <div style="max-width:1200px;margin:0 auto;position:relative;z-index:1;">
+    <span class="section-tag">#</span>
+    <div class="section-title">4단계로 완성되는<br>GEO 최적화</div>
+  </div>
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">01</div>
+      <h4>사이트 분석</h4>
+      <p>현재 JSON-LD 스키마와 콘텐츠 구조를 크롤링하여 AI 인용 가능성을 진단합니다.</p>
+    </div>
+    <div class="step reveal" style="transition-delay:.10s">
+      <div class="step-num">02</div>
+      <h4>구조 설계</h4>
+      <p>Schema.org 타입 선정부터 엔티티 연결까지, GEO에 최적화된 마크업 구조를 설계합니다.</p>
+    </div>
+    <div class="step reveal" style="transition-delay:.20s">
+      <div class="step-num">03</div>
+      <h4>스키마 적용</h4>
+      <p>생성된 JSON-LD 코드를 사이트에 삽입하고 Google Rich Results, AI 크롤러 호환성을 검증합니다.</p>
+    </div>
+    <div class="step reveal" style="transition-delay:.30s">
+      <div class="step-num">04</div>
+      <h4>성과 추적</h4>
+      <p>AI 검색 엔진의 인용률 변화를 모니터링하고 지속적인 개선 리포트를 제공합니다.</p>
+    </div>
+  </div>
+</section>
+ 
+<footer class="geo-footer">
+  <a href="geo-index.html" class="geo-logo">GE<span>O</span></a>
+  <p>© 2025 GEO Platform. All rights reserved.</p>
+</footer>
+ 
+<script src="geo-scripts.js"></script>
+</body>
+</html>
