@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO — 의뢰 신청</title>
+<link rel="stylesheet" href="geo-styles.css">
+</head>
+<body class="page-order">
+
+<div class="topbar">
+  <a href="geo-index.html" class="geo-logo">GE<span>O</span></a>
+  <div class="topbar-right"><a href="geo-personal.html">← 대시보드로</a></div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div class="page-title">GEO 분석 의뢰</div>
+    <div class="page-sub">분석할 페이지 정보를 입력해주세요.</div>
+  </div>
+
+  <form id="orderForm">
+
+    <!-- STEP 01: URL 입력 -->
+    <div class="form-card">
+      <div class="card-section-title">STEP 01</div>
+
+      <div class="field">
+        <label>분석 대상 URL<span class="req">*</span></label>
+        <div class="input-wrap">
+          <span class="input-icon">🔗</span>
+          <input type="url" id="targetUrl" placeholder="https://example.com/page" required>
+        </div>
+        <div class="field-hint">JSON-LD 스키마가 포함된 페이지 URL을 입력하세요.</div>
+      </div>
+
+      <div class="field">
+        <label>HTML 본문 텍스트</label>
+        <div class="input-wrap">
+          <textarea class="order-textarea" id="htmlText"
+            placeholder="페이지의 주요 본문 텍스트를 붙여 넣어주세요."></textarea>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>JSON-LD 직접 입력</label>
+        <div class="input-wrap">
+          <textarea class="order-textarea order-textarea-mono" id="jsonLdInput"
+            placeholder='{"@context":"https://schema.org","@type":"WebPage",...}'></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 02: 서비스 정보 -->
+    <div class="form-card">
+      <div class="card-section-title">STEP 02</div>
+
+      <div class="field">
+        <label>서비스 / 사이트명<span class="req">*</span></label>
+        <div class="input-wrap">
+          <span class="input-icon">🌐</span>
+          <input type="text" id="siteName" placeholder="예) GEO Platform" required>
+        </div>
+      </div>
+
+      <div class="field-row-2">
+        <div class="field">
+          <label>서비스 유형<span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">📋</span>
+            <select id="serviceType" required>
+              <option value="">선택해 주세요</option>
+              <option>쇼핑몰 / 이커머스</option>
+              <option>뉴스 / 미디어</option>
+              <option>SaaS / 테크</option>
+              <option>교육 / 학술</option>
+              <option>의료 / 헬스케어</option>
+              <option>로컬 비즈니스</option>
+              <option>기타</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>주요 타겟 AI 엔진</label>
+          <div class="input-wrap">
+            <span class="input-icon">🤖</span>
+            <select id="targetEngine">
+              <option value="">전체</option>
+              <option>ChatGPT</option>
+              <option>Perplexity</option>
+              <option>Gemini</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 분석 항목 체크박스 -->
+      <div class="field">
+        <label>분석 항목 선택 <span style="font-weight:400;color:var(--gray-400)">(복수 선택 가능)</span></label>
+        <div class="check-grid">
+          <div class="check-item">
+            <input type="checkbox" id="chk1" checked>
+            <label for="chk1">
+              <span class="check-icon">🏗️</span>
+              <span class="check-name">스키마 구조 진단</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="chk2" checked>
+            <label for="chk2">
+              <span class="check-icon">🧠</span>
+              <span class="check-name">AI 인용률 평가</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="chk3">
+            <label for="chk3">
+              <span class="check-icon">🔗</span>
+              <span class="check-name">엔티티 연결 검토</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="chk4">
+            <label for="chk4">
+              <span class="check-icon">📄</span>
+              <span class="check-name">FAQ·HowTo 제안</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="chk5">
+            <label for="chk5">
+              <span class="check-icon">📊</span>
+              <span class="check-name">Rich Results 검증</span>
+            </label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" id="chk6">
+            <label for="chk6">
+              <span class="check-icon">✍️</span>
+              <span class="check-name">개선 스키마 제공</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 03: 의뢰자 정보 -->
+    <div class="form-card">
+      <div class="card-section-title">STEP 03</div>
+
+      <div class="field-row-2">
+        <div class="field">
+          <label>의뢰자 성함<span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="contactName" placeholder="홍길동" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>연락처</label>
+          <div class="input-wrap">
+            <span class="input-icon">📞</span>
+            <input type="tel" id="contactPhone" placeholder="010-0000-0000">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>이메일<span class="req">*</span></label>
+        <div class="input-wrap">
+          <span class="input-icon">✉</span>
+          <input type="email" id="contactEmail" placeholder="name@company.com" required>
+        </div>
+        <div class="field-hint">분석 완료 시 결과 리포트를 이메일로 발송합니다.</div>
+      </div>
+
+      <div class="field">
+        <label>소속 기관 / 회사</label>
+        <div class="input-wrap">
+          <span class="input-icon">🏢</span>
+          <input type="text" id="contactOrg" placeholder="레전드 기업">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>추가 요청 사항</label>
+        <div class="input-wrap">
+          <textarea class="order-textarea" id="memo"
+            placeholder="분석 외 추가 요청 사항이나 참고 사항을 자유롭게 입력해 주세요."></textarea>
+        </div>
+      </div>
+
+      <!-- 제출 -->
+      <div class="order-submit-wrap">
+        <div class="order-submit-info">
+        </div>
+        <button class="btn btn-submit order-submit-btn" type="submit"><a href="geo-personal.html">
+          분석 의뢰 →
+        </button>
+      </div>
+    </div>
+
+  </form>
+</main>
+
+<script src="geo-scripts.js"></script>
+</body>
+</html>
