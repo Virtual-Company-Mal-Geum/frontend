@@ -711,3 +711,110 @@ function switchTab(btn, type) {
   btn.classList.add('active');
 }
 window.switchTab = switchTab;
+
+/* ============================================================
+   GEO Order Page — 의뢰 신청 폼 핸들러
+   ============================================================ */
+
+(function initOrderForm() {
+  const form = document.getElementById('orderForm');
+  if (!form) return;
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const today = new Date();
+    const dateStr = today.getFullYear() + '.' +
+      String(today.getMonth() + 1).padStart(2, '0') + '.' +
+      String(today.getDate()).padStart(2, '0');
+
+    const payload = {
+      targetUrl:     document.getElementById('targetUrl')?.value,
+      htmlText:      document.getElementById('htmlText')?.value,
+      jsonLd:        document.getElementById('jsonLdInput')?.value,
+      siteName:      document.getElementById('siteName')?.value,
+      serviceType:   document.getElementById('serviceType')?.value,
+      targetEngine:  document.getElementById('targetEngine')?.value,
+      analysisItems: [...document.querySelectorAll('.check-grid input:checked')].map(el => el.nextElementSibling?.querySelector('.check-name')?.textContent || el.id),
+      contactName:   document.getElementById('contactName')?.value,
+      contactPhone:  document.getElementById('contactPhone')?.value,
+      contactEmail:  document.getElementById('contactEmail')?.value,
+      contactOrg:    document.getElementById('contactOrg')?.value,
+      memo:          document.getElementById('memo')?.value,
+      date:          dateStr,
+      status:        'queued',
+    };
+
+    /* localStorage에 의뢰 목록 저장 (대시보드에서 읽음) */
+    const orders = JSON.parse(localStorage.getItem('geoOrders') || '[]');
+    orders.unshift(payload);
+    localStorage.setItem('geoOrders', JSON.stringify(orders));
+
+    const btn = form.querySelector('.order-submit-btn');
+    btn.textContent = '제출 중...';
+    btn.disabled = true;
+
+    /* 실제 백엔드 연동 시:
+       fetch('/api/order', { method:'POST', headers:{'Content-Type':'application/json'},
+         body: JSON.stringify(payload) })
+       .then(r => r.json())
+       .then(() => window.location.href = 'geo-personal.html');
+    */
+    setTimeout(() => { window.location.href = 'geo-personal.html'; }, 800);
+  });
+})();
+
+
+/* ============================================================
+   GEO Personal Page — localStorage 의뢰 목록 동적 렌더링
+   ============================================================ */
+
+(function initPersonalOrders() {
+  const list = document.getElementById('projectList');
+  if (!list) return;
+
+  const orders = JSON.parse(localStorage.getItem('geoOrders') || '[]');
+  if (orders.length === 0) return;
+
+  /* 서비스 유형별 아이콘 */
+  const iconMap = {
+    '쇼핑몰 / 이커머스': '🛒',
+    '뉴스 / 미디어':     '📰',
+    'SaaS / 테크':       '💻',
+    '교육 / 학술':       '🎓',
+    '의료 / 헬스케어':   '🏥',
+    '로컬 비즈니스':     '🏪',
+    '기타':              '🌐',
+  };
+
+  orders.forEach(order => {
+    const icon  = iconMap[order.serviceType] || '🌐';
+    const items = (order.analysisItems || []).join(' · ') || '기본 분석';
+    const wrap  = document.createElement('div');
+    wrap.className  = 'project-row-wrap';
+    wrap.dataset.status = order.status || 'queued';
+
+    wrap.innerHTML = `
+      <div class="project-row">
+        <div class="proj-icon geo">${icon}</div>
+        <div class="proj-info">
+          <div class="proj-name">${order.siteName || order.targetUrl}</div>
+          <div class="proj-meta">${order.targetUrl} · ${items}</div>
+        </div>
+        <div class="proj-date">${order.date}</div>
+        <span class="status-badge queued">◌ 대기 중</span>
+      </div>`;
+
+    /* 목록 맨 위에 삽입 */
+    list.insertBefore(wrap, list.firstChild);
+  });
+
+  /* 통계 카드 업데이트 */
+  const totalEl = document.querySelector('.stat-card.c-blue .sc-val');
+  const queueEl = document.querySelector('.stat-card.c-orange .sc-val');
+  if (totalEl) totalEl.textContent = parseInt(totalEl.textContent) + orders.length;
+  if (queueEl) queueEl.textContent = parseInt(queueEl.textContent) + orders.length;
+
+  /* page-info 업데이트 */
+  updatePageInfo();
+})();
