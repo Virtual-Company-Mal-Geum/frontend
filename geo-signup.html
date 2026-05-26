@@ -29,27 +29,25 @@
     <!-- STEP 01 -->
     <div class="form-card">
       <div class="card-section-title">계정 정보 <span>STEP 01</span></div>
-      <div class="field-row-2">
-        <div class="field">
-          <label>성<span class="req">*</span></label>
-          <div class="input-wrap"><input type="text" placeholder="김" required></div>
-        </div>
-        <div class="field">
-          <label>이름<span class="req">*</span></label>
-          <div class="input-wrap"><input type="text" placeholder="철수" required></div>
-        </div>
+      <div class="field">
+        <label for="name">이름<span class="req">*</span></label>
+        <div class="input-wrap"><input type="text" id="name" placeholder="김철수" required></div>
       </div>
       <div class="field">
-        <label>이메일<span class="req">*</span></label>
-        <div class="input-wrap"><span class="input-icon">✉</span><input type="email" placeholder="name@company.com" required></div>
+        <label for="email">이메일<span class="req">*</span></label>
+        <div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="email" placeholder="name@company.com" required></div>
       </div>
       <div class="field">
-        <label>소속 기관 / 회사</label>
-        <div class="input-wrap"><span class="input-icon">🏢</span><input type="text" placeholder="(주)예시기업"></div>
+        <label for="phone">연락처<span class="req">*</span></label>
+        <div class="input-wrap"><span class="input-icon">📞</span><input type="tel" id="phone" placeholder="010-0000-0000" required></div>
       </div>
       <div class="field">
-        <label>비밀번호<span class="req">*</span></label>
-        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="pwInput" placeholder="8자 이상 입력" required></div>
+        <label for="company">소속 기관 / 회사</label>
+        <div class="input-wrap"><span class="input-icon">🏢</span><input type="text" id="company" placeholder="(주)예시기업"></div>
+      </div>
+      <div class="field">
+        <label for="password1">비밀번호<span class="req">*</span></label>
+        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="password1" placeholder="8자 이상 입력" required></div>
         <div class="pw-strength">
           <div class="pw-bar" id="pw1"></div>
           <div class="pw-bar" id="pw2"></div>
@@ -60,7 +58,7 @@
       </div>
       <div class="field">
         <label>비밀번호 확인<span class="req">*</span></label>
-        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" placeholder="비밀번호를 다시 입력" required></div>
+        <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="password2" placeholder="비밀번호를 다시 입력" required></div>
       </div>
     </div>
 
