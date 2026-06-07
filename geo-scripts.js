@@ -54,6 +54,14 @@ function unwrapApiData(data) {
   return data?.data ?? data?.result ?? data;
 }
 
+function persistAccessTokenFromResponse(data) {
+  const token = data?.token || data?.accessToken;
+  if (token) {
+    localStorage.setItem('geoAccessToken', token);
+  }
+  return token;
+}
+
 function normalizeOrdersResponse(data) {
   const resolved = unwrapApiData(data);
   if (Array.isArray(resolved)) return resolved;
@@ -392,12 +400,11 @@ function saveLocalOrder(order) {
         body: JSON.stringify({ email, password }),
       });
 
-      const token = loginRes?.token;
+      const token = persistAccessTokenFromResponse(loginRes);
       if (!token) {
         throw new Error('로그인 응답에 인증 토큰이 없습니다.');
       }
 
-      localStorage.setItem('geoAccessToken', token);
       window.location.href = 'geo-personal.html';
     } catch (error) {
       if (errMsg) {
@@ -510,8 +517,9 @@ function saveLocalOrder(order) {
         body: JSON.stringify(payload),
       });
 
-      if (signupRes?.token) {
-        localStorage.setItem('geoAccessToken', signupRes.token);
+      const token = persistAccessTokenFromResponse(signupRes);
+      if (!token) {
+        throw new Error('회원가입 응답에 인증 토큰이 없습니다.');
       }
       window.location.href = 'geo-personal.html';
     } catch (error) {
