@@ -1,7 +1,7 @@
 'use strict';
 
 /* ── API CLIENT ── */
-const API_BASE_URL = 'http://localhost:8080/api/v1/geo';
+const API_BASE_URL = window.GEO_CONFIG.API_BASE_URL;
 
 (function persistAccessTokenFromQuery() {
   const params = new URLSearchParams(window.location.search);
