@@ -382,9 +382,12 @@ function saveLocalOrder(order) {
         body: JSON.stringify({ email, password }),
       });
 
-      if (loginRes?.token) {
-        localStorage.setItem('geoAccessToken', loginRes.token);
+      const token = loginRes?.token;
+      if (!token) {
+        throw new Error('로그인 응답에 인증 토큰이 없습니다.');
       }
+
+      localStorage.setItem('geoAccessToken', token);
       window.location.href = 'geo-personal.html';
     } catch (error) {
       if (errMsg) {
