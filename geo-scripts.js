@@ -13,12 +13,18 @@ function buildApiUrl(path) {
   return `${API_BASE_URL}${apiPath}`;
 }
 
+function clearAuthState() {
+  localStorage.removeItem('geoAccessToken');
+  localStorage.removeItem('geoOrders');
+}
+
 (function persistAccessTokenFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const accessToken = params.get('accessToken');
   const oauthError = params.get('oauthError');
 
   if (accessToken) {
+    clearAuthState();
     localStorage.setItem('geoAccessToken', accessToken);
 
     // URL에서 토큰 제거
@@ -385,6 +391,12 @@ function saveLocalOrder(order) {
   draw();
 })();
 
+function logout() {
+  clearAuthState();
+  window.location.href = 'index.html';
+}
+
+window.logout = logout;
 
 /* ── LOGIN FORM ── */
 (function initLoginForm() {
@@ -405,6 +417,7 @@ function saveLocalOrder(order) {
     const password = form.querySelector('#password')?.value;
 
     try {
+      clearAuthState();
       const loginRes = await requestJson('/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
