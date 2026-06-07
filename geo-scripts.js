@@ -16,11 +16,21 @@ function buildApiUrl(path) {
 (function persistAccessTokenFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const accessToken = params.get('accessToken');
+  const oauthError = params.get('oauthError');
 
   if (accessToken) {
     localStorage.setItem('geoAccessToken', accessToken);
 
     // URL에서 토큰 제거
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  if (oauthError) {
+    const errMsg = document.getElementById('errMsg');
+    if (errMsg) {
+      errMsg.textContent = 'Google 로그인 세션이 만료되었습니다. 다시 로그인해 주세요.';
+      errMsg.classList.add('show');
+    }
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 })();
