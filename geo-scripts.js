@@ -2,6 +2,16 @@
 
 /* ── API CLIENT ── */
 const API_BASE_URL = window.GEO_CONFIG.API_BASE_URL;
+const API_PATH_PREFIX = '/api/v1/geo';
+
+function buildApiUrl(path) {
+  if (/^https?:\/\//i.test(path)) return path;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const apiPath = normalizedPath.startsWith(API_PATH_PREFIX)
+    ? normalizedPath
+    : `${API_PATH_PREFIX}${normalizedPath}`;
+  return `${API_BASE_URL}${apiPath}`;
+}
 
 (function persistAccessTokenFromQuery() {
   const params = new URLSearchParams(window.location.search);
@@ -17,7 +27,7 @@ const API_BASE_URL = window.GEO_CONFIG.API_BASE_URL;
 
 async function requestJson(path, options = {}) {
   const token = localStorage.getItem('geoAccessToken');
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const res = await fetch(buildApiUrl(path), {
     ...options,
     headers: {
       'Content-Type': 'application/json',
