@@ -1263,7 +1263,7 @@ window.switchTab = switchTab;
     btn.textContent = '분석 중입니다.';
     btn.disabled = true;
     setSubmitInfo('분석 중입니다. 잠시만 기다려 주세요.');
-    const minimumLoadingDelay = wait(35000);
+    const minimumLoadingDelay = wait(68000);
     let isNavigatingToResult = false;
 
     /* 실제 백엔드 연동 시:
