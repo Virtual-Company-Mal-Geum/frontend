@@ -1260,11 +1260,11 @@ window.switchTab = switchTab;
       submitInfo.innerHTML = `<span class="order-loading-dot" aria-hidden="true"></span><span>${message}</span>`;
     };
 
-    let shouldResetSubmitButton = true;
-
     btn.textContent = '분석 중입니다.';
     btn.disabled = true;
-    setSubmitInfo('분석 의뢰를 접수하고 있습니다.');
+    setSubmitInfo('분석 중입니다. 잠시만 기다려 주세요.');
+    const minimumLoadingDelay = wait(15000);
+    let isNavigatingToResult = false;
 
     /* 실제 백엔드 연동 시:
        fetch('/api/order', { method:'POST', headers:{'Content-Type':'application/json'},
@@ -1287,25 +1287,11 @@ window.switchTab = switchTab;
         createdAt: createdOrder?.createdAt ?? new Date().toISOString(),
       });
 
-      if (!orderId) {
-        setSubmitInfo('분석 의뢰가 완료되었습니다. 결과 페이지로 이동합니다.');
-        shouldResetSubmitButton = false;
-        window.location.href = buildResultPageUrl();
-        return;
-      }
-
-      try {
-        await waitForCompletedReport(orderId, attempt => {
-          const elapsedSeconds = (attempt - 1) * 3;
-          setSubmitInfo(`분석이 진행 중입니다. 결과가 준비되면 자동으로 이동합니다. (${elapsedSeconds}초)`);
-        });
-        setSubmitInfo('분석이 완료되었습니다. 결과 페이지로 이동합니다.');
-        shouldResetSubmitButton = false;
-        window.location.href = buildResultPageUrl(orderId);
-      } catch (pollError) {
-        alert(pollError.message || '분석 완료 대기 중 오류가 발생했습니다.');
-        setSubmitInfo('분석 완료를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
-      }
+      await minimumLoadingDelay;
+      setSubmitInfo('분석이 완료되었습니다. 결과 페이지로 이동합니다.');
+      isNavigatingToResult = true;
+      window.location.href = buildResultPageUrl(orderId);
+      return;
     } catch (error) {
       // API 실패 시에도 대시보드에서 목록을 확인할 수 있게 로컬 보관
       saveLocalOrder({
@@ -1317,7 +1303,7 @@ window.switchTab = switchTab;
       alert(error.message || ' 주문 요청에 실패했습니다.');
       setSubmitInfo('주문 요청에 실패했습니다. 입력 내용을 확인한 뒤 다시 시도해 주세요.');
     } finally {
-      if (shouldResetSubmitButton) {
+      if (!isNavigatingToResult) {
         btn.disabled = false;
         btn.textContent = '분석 의뢰 →';
       }
