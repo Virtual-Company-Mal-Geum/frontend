@@ -1263,7 +1263,6 @@ window.switchTab = switchTab;
     btn.textContent = '분석 중입니다.';
     btn.disabled = true;
     setSubmitInfo('분석 중입니다. 잠시만 기다려 주세요.');
-    const minimumLoadingDelay = wait(68000);
     let isNavigatingToResult = false;
 
     /* 실제 백엔드 연동 시:
@@ -1287,7 +1286,6 @@ window.switchTab = switchTab;
         createdAt: createdOrder?.createdAt ?? new Date().toISOString(),
       });
 
-      await minimumLoadingDelay;
       setSubmitInfo('분석이 완료되었습니다. 결과 페이지로 이동합니다.');
       isNavigatingToResult = true;
       window.location.href = buildResultPageUrl(orderId);
