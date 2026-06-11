@@ -2388,6 +2388,22 @@ body.page-order { background: var(--gray-100); min-height: 100vh; }
 .order-submit-info-icon { font-size: 1rem; }
 .order-submit-info strong { color: var(--blue-900); font-weight: 600; }
 
+.order-loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 rgba(0,153,255,0.28);
+  animation: orderLoadingPulse 1.4s ease-out infinite;
+  flex: 0 0 auto;
+}
+
+@keyframes orderLoadingPulse {
+  0% { box-shadow: 0 0 0 0 rgba(0,153,255,0.28); }
+  70% { box-shadow: 0 0 0 8px rgba(0,153,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,153,255,0); }
+}
+
 .order-submit-btn {
   width: auto;
   padding: 14px 36px;

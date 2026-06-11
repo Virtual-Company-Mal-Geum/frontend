@@ -105,6 +105,53 @@ function normalizeOrderStatus(status) {
   return normalized || 'queued';
 }
 
+function hasCompletedReport(data) {
+  const report = unwrapApiData(data);
+  const aiResult = report?.aiResult || {};
+  const rawStatus = String(report?.jobStatus || report?.status || '').toLowerCase();
+  if (rawStatus === 'failed' || rawStatus === 'error') {
+    const error = new Error('분석 처리 중 오류가 발생했습니다. 대시보드에서 상태를 확인해 주세요.');
+    error.isFatalReportStatus = true;
+    throw error;
+  }
+  const status = normalizeOrderStatus(rawStatus);
+  const hasAiContent = Boolean(
+    aiResult.content ||
+    aiResult.categories ||
+    report?.suggestedJsonLd ||
+    aiResult.suggested_json_ld
+  );
+  return status === 'done' || hasAiContent;
+}
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitForCompletedReport(orderId, onTick) {
+  const startedAt = Date.now();
+  const timeoutMs = 10 * 60 * 1000;
+  const intervalMs = 3000;
+  let attempt = 0;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    attempt += 1;
+    onTick?.(attempt);
+
+    try {
+      const reportResponse = await requestJson(`/report/${encodeURIComponent(orderId)}`);
+      if (hasCompletedReport(reportResponse)) return reportResponse;
+    } catch (error) {
+      if (error?.isFatalReportStatus) throw error;
+      console.debug('Report is not ready yet:', error);
+    }
+
+    await wait(intervalMs);
+  }
+
+  throw new Error('분석 완료 대기 시간이 초과되었습니다. 잠시 후 대시보드에서 결과를 확인해 주세요.');
+}
+
 function formatOrderDate(value) {
   if (!value) return '';
   const date = new Date(value);
@@ -1207,8 +1254,17 @@ window.switchTab = switchTab;
     /* localStorage에 의뢰 목록 저장 (대시보드에서 읽음) */
 
     const btn = form.querySelector('.order-submit-btn');
-    btn.textContent = '제출 중...';
+    const submitInfo = document.getElementById('orderSubmitInfo');
+    const setSubmitInfo = message => {
+      if (!submitInfo) return;
+      submitInfo.innerHTML = `<span class="order-loading-dot" aria-hidden="true"></span><span>${message}</span>`;
+    };
+
+    let shouldResetSubmitButton = true;
+
+    btn.textContent = '분석 중입니다.';
     btn.disabled = true;
+    setSubmitInfo('분석 의뢰를 접수하고 있습니다.');
 
     /* 실제 백엔드 연동 시:
        fetch('/api/order', { method:'POST', headers:{'Content-Type':'application/json'},
@@ -1222,15 +1278,34 @@ window.switchTab = switchTab;
         body: JSON.stringify(payload),
       });
       const createdOrder = unwrapApiData(orderResponse);
+      const orderId = createdOrder?.orderId ?? createdOrder?.id;
       saveLocalOrder({
         ...payload,
         ...createdOrder,
-        orderId: createdOrder?.orderId ?? createdOrder?.id,
+        orderId,
         status: createdOrder?.status ?? createdOrder?.jobStatus ?? 'queued',
         createdAt: createdOrder?.createdAt ?? new Date().toISOString(),
       });
-      const orderId = createdOrder?.orderId ?? createdOrder?.id;
-      window.location.href = orderId ? buildResultPageUrl(orderId) : 'geo-personal.html';
+
+      if (!orderId) {
+        setSubmitInfo('분석 의뢰가 완료되었습니다. 결과 페이지로 이동합니다.');
+        shouldResetSubmitButton = false;
+        window.location.href = buildResultPageUrl();
+        return;
+      }
+
+      try {
+        await waitForCompletedReport(orderId, attempt => {
+          const elapsedSeconds = (attempt - 1) * 3;
+          setSubmitInfo(`분석이 진행 중입니다. 결과가 준비되면 자동으로 이동합니다. (${elapsedSeconds}초)`);
+        });
+        setSubmitInfo('분석이 완료되었습니다. 결과 페이지로 이동합니다.');
+        shouldResetSubmitButton = false;
+        window.location.href = buildResultPageUrl(orderId);
+      } catch (pollError) {
+        alert(pollError.message || '분석 완료 대기 중 오류가 발생했습니다.');
+        setSubmitInfo('분석 완료를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      }
     } catch (error) {
       // API 실패 시에도 대시보드에서 목록을 확인할 수 있게 로컬 보관
       saveLocalOrder({
@@ -1240,10 +1315,12 @@ window.switchTab = switchTab;
         createdAt: new Date().toISOString(),
       });
       alert(error.message || ' 주문 요청에 실패했습니다.');
-      window.location.href = 'geo-personal.html';
+      setSubmitInfo('주문 요청에 실패했습니다. 입력 내용을 확인한 뒤 다시 시도해 주세요.');
     } finally {
-      btn.disabled = false;
-      btn.textContent = '돌아갑니다';
+      if (shouldResetSubmitButton) {
+        btn.disabled = false;
+        btn.textContent = '분석 의뢰 →';
+      }
     }
   });
 })();
