@@ -1832,6 +1832,7 @@ input[type="url"]:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .ph-back {
@@ -1842,10 +1843,16 @@ input[type="url"]:focus {
   font-size: 0.82rem;
   text-decoration: none;
   transition: color var(--transition-base);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .ph-back:hover { color: var(--white); }
 
-.ph-title-block { text-align: center; }
+.ph-title-block {
+  text-align: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
 .ph-eyebrow {
   font-family: var(--font-mono);
@@ -1863,9 +1870,17 @@ input[type="url"]:focus {
   font-weight: 800;
   color: var(--white);
   letter-spacing: -0.02em;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-.ph-actions { display: flex; gap: 10px; align-items: center; }
+.ph-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+}
 
 .ph-badge {
   padding: 5px 12px;
@@ -2372,6 +2387,22 @@ body.page-order { background: var(--gray-100); min-height: 100vh; }
 }
 .order-submit-info-icon { font-size: 1rem; }
 .order-submit-info strong { color: var(--blue-900); font-weight: 600; }
+
+.order-loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 rgba(0,153,255,0.28);
+  animation: orderLoadingPulse 1.4s ease-out infinite;
+  flex: 0 0 auto;
+}
+
+@keyframes orderLoadingPulse {
+  0% { box-shadow: 0 0 0 0 rgba(0,153,255,0.28); }
+  70% { box-shadow: 0 0 0 8px rgba(0,153,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,153,255,0); }
+}
 
 .order-submit-btn {
   width: auto;

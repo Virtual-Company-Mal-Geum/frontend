@@ -1,0 +1,1 @@
+const API_BASE_URL = window.GEO_CONFIG.API_BASE_URL;
