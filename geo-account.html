@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO — 계정 및 플랜 관리</title>
+<link rel="stylesheet" href="geo-styles.css">
+</head>
+<body class="page-personal page-account">
+
+<aside class="sidebar">
+  <a href="geo-personal.html" class="sidebar-logo">GE<span>O</span></a>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="geo-personal.html"><span class="icon">📊</span> 의뢰 대시보드</a>
+    <a class="nav-item active" href="geo-account.html"><span class="icon">⚙️</span> 계정 설정</a>
+    <a class="nav-item" href="#"><span class="icon">🔔</span> 알림</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="avatarIcon">기</div>
+      <div>
+        <div class="user-name" id="displayUserName">기캡이</div>
+      </div>
+      <button class="logout-btn" onclick="window.location.href='geo-login.html'">로그아웃</button>
+    </div>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>계정 및 플랜 관리</h1>
+      <p>회원 정보와 구독 중인 GEO 분석 플랜을 확인하고 관리하세요.</p>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="account-grid">
+
+      <!-- 계정 정보 Card -->
+      <div class="form-card">
+        <div class="card-section-title">계정 정보</div>
+
+        <div class="profile-header">
+          <div class="profile-avatar" id="profileAvatar">기</div>
+          <div class="profile-info-text">
+            <h3 id="profileName">기캡이</h3>
+            <p id="profileEmail">developer@geo-engine.io</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>계정 ID / 이메일</label>
+          <div class="info-value-box">
+            <span id="infoEmail">developer@geo-engine.io</span>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom: 20px;">
+          <label>전화번호</label>
+          <div class="info-value-box">
+            <span id="infoPhone">010-0000-0000</span>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost account-btn" type="button" id="changePasswordBtn" onclick="alert('비밀번호 변경 기능은 준비 중입니다.')">
+          비밀번호 수정
+        </button>
+      </div>
+
+      <!-- 플랜 및 사용량 Card -->
+      <div class="form-card">
+        <div class="card-section-title">현재 플랜</div>
+
+        <div class="usage-metric">
+          <div class="metric-header">
+            <span>월간 GEO 분석 횟수</span>
+            <span class="metric-val" id="usageText">14 / 50 회</span>
+          </div>
+          <div class="usage-bar">
+            <div class="usage-bar-fill" style="width: 28%;"></div>
+          </div>
+        </div>
+
+        <div class="usage-metric" style="margin-bottom: 20px;">
+          <div class="metric-header">
+            <span>다음 결제 예정일</span>
+            <span class="metric-val">2026.08.15</span>
+          </div>
+        </div>
+
+        <ul class="plan-features-list">
+          <li><span class="check">✓</span> 실시간 AI 엔진(ChatGPT · Perplexity · Gemini) 벤치마크</li>
+          <li><span class="check">✓</span> 상세 GEO 최적화 점수 리포트 제공</li>
+          <li><span class="check">✓</span> Schema.org & 데이터 밀도 정밀 진단</li>
+          <li><span class="check">✓</span> 월 최대 50회 심층 의뢰 분석</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="geo-scripts.js"></script>
+</body>
+</html>
