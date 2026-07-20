@@ -2387,3 +2387,122 @@ body.page-order { background: var(--gray-100); min-height: 100vh; }
   .order-submit-wrap { flex-direction: column; align-items: stretch; }
   .order-submit-btn { width: 100%; }
 }
+
+/* ============================================================
+   GEO Platform — Account & Plan Page (계정 및 플랜 관리)
+   ============================================================ */
+
+.page-account .content { max-width: 980px; }
+
+.account-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── PROFILE HEADER ── */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.profile-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--white);
+  flex-shrink: 0;
+}
+
+.profile-info-text h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--blue-900);
+  letter-spacing: -0.02em;
+}
+.profile-info-text p {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  margin-top: 3px;
+}
+
+/* ── INFO VALUE BOX (읽기 전용 필드) ── */
+.info-value-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--blue-900);
+}
+
+.info-icon { color: var(--gray-400); font-size: 0.9rem; }
+.info-icon.accent { color: var(--accent); }
+
+.account-btn { width: 100%; margin-top: 6px; }
+
+/* ── PLAN / USAGE ── */
+.usage-metric { margin-bottom: 18px; }
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--gray-600);
+  margin-bottom: 8px;
+}
+.metric-val { color: var(--blue-900); font-weight: 600; }
+
+.usage-bar {
+  height: 6px;
+  background: var(--gray-200);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.usage-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  transition: width 1s ease;
+}
+
+.plan-features-list {
+  list-style: none;
+  margin: 20px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.plan-features-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.83rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+.plan-features-list .check {
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 850px) {
+  .account-grid { grid-template-columns: 1fr; }
+}
