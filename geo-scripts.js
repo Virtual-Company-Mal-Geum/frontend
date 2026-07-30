@@ -463,17 +463,97 @@ const MOCK_REPORT = {
 
 /* ── ReportResult 렌더링 ── */
 (function initResultPage() {
-  // 실제 연동 시: fetch('/api/report/' + orderId).then(r => r.json()).then(render)
-  const report = MOCK_REPORT;
-  renderPage(report);
+  // 결과 페이지가 아니면 스킵
+  if (!document.getElementById('ph-title')) return;
+
+  const orderId = new URLSearchParams(window.location.search).get('orderId');
+
+  if (!orderId) {
+    console.warn('orderId가 URL에 없습니다 (예: result.html?orderId=5). MOCK 데이터로 대체합니다.');
+    renderPage(MOCK_REPORT);
+    return;
+  }
+
+  fetchGeoReport(orderId);
 })();
+
+/**
+ * 백엔드 리포트 상세 조회 API 호출
+ * GET /api/v1/geo/report/{orderId}
+ * @param {string|number} orderId
+ */
+async function fetchGeoReport(orderId) {
+  // 로그인 시 저장해둔 액세스 토큰
+  const jwtToken = localStorage.getItem('ACCESS_TOKEN');
+
+  try {
+    const response = await fetch(`/api/v1/geo/report/${orderId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`서버 에러 발생: ${response.status}`);
+    }
+
+    const data = await response.json();
+    renderPage(normalizeReport(data));
+  } catch (error) {
+    console.error('API 호출 실패:', error);
+    renderReportError(error.message);
+  }
+}
+
+/**
+ * API 응답을 renderPage()가 기대하는 형태로 정규화한다.
+ * 현재 명세(aiResult.result = 텍스트 한 덩어리)와
+ * 추후 확장될 수 있는 구조화된 형태(aiResult.categories) 모두 대응.
+ * @param {object} data
+ */
+function normalizeReport(data) {
+  const ai = data.aiResult || {};
+
+  // 이미 구조화된 categories가 있으면 그대로 사용 (차트/KPI 정상 렌더링)
+  if (ai.categories) return data;
+
+  // 현재 명세: 텍스트 한 덩어리 → 표시용 최소 골격으로 감싸기
+  return {
+    ...data,
+    aiResult: {
+      total_score: null,
+      max_score: null,
+      categories: null,
+      raw_text: ai.result || '',
+    },
+  };
+}
+
+/**
+ * 리포트 조회 실패 시 화면에 에러 상태 표시
+ * @param {string} message
+ */
+function renderReportError(message) {
+  const badge = document.getElementById('ph-badge');
+  if (badge) {
+    badge.textContent = '⚠ 조회 실패';
+    badge.style.color = 'var(--red)';
+  }
+  const feedbackList = document.getElementById('feedbackList');
+  if (feedbackList) {
+    feedbackList.innerHTML = `<div class="insight-item high">
+      <span class="insight-icon">⚠️</span>
+      <div class="insight-text">리포트를 불러오지 못했습니다: ${message}</div>
+    </div>`;
+  }
+}
 
 function renderPage(report) {
   const ai = report.aiResult;
-  const cats = ai.categories;
-  const catKeys = Object.keys(cats);
 
-  /* 메타 정보 */
+  /* 메타 정보 (카테고리 유무와 무관하게 공통 표시) */
   document.getElementById('ph-title').textContent = report.targetUrl;
   document.getElementById('m-order-id').textContent = '#' + report.orderId;
   document.getElementById('m-url').textContent = report.targetUrl;
@@ -483,8 +563,32 @@ function renderPage(report) {
 
   /* 상태 뱃지 */
   const badge = document.getElementById('ph-badge');
-  badge.textContent = report.jobStatus === 'COMPLETED' ? '● 분석 완료' : '◉ ' + report.jobStatus;
-  badge.style.color = report.jobStatus === 'COMPLETED' ? 'var(--green)' : 'var(--orange)';
+  const isDone = report.jobStatus === 'COMPLETED' || report.jobStatus === 'SUCCESS';
+  badge.textContent = isDone ? '● 분석 완료' : '◉ ' + report.jobStatus;
+  badge.style.color = isDone ? 'var(--green)' : 'var(--orange)';
+
+  /* 현재 API 명세: aiResult.result가 텍스트 한 덩어리로 오는 경우
+     → 구조화 카테고리/차트 없이 텍스트만 피드백 카드로 표시하고 종료 */
+  if (!ai.categories) {
+    document.getElementById('kpi-total-val').innerHTML = '<span class="kpi-unit">-</span>';
+    const gradeEl = document.getElementById('kpi-total-grade');
+    gradeEl.textContent = '';
+
+    const feedbackList = document.getElementById('feedbackList');
+    if (feedbackList) {
+      feedbackList.innerHTML = `<div class="insight-item">
+        <span class="insight-icon">📝</span>
+        <div class="insight-text">${(ai.raw_text || '').replace(/\n/g, '<br>')}</div>
+      </div>`;
+    }
+
+    const jsonBlock = document.getElementById('jsonLdBlock');
+    if (jsonBlock) jsonBlock.textContent = '—';
+    return;
+  }
+
+  const cats = ai.categories;
+  const catKeys = Object.keys(cats);
 
   /* 총점 KPI */
   const total = ai.total_score;
