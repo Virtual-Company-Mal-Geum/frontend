@@ -15,7 +15,7 @@ function buildApiUrl(path) {
 
 function clearAuthState() {
   localStorage.removeItem('geoAccessToken');
-  localStorage.removeItem('geoOrders');
+  localStorage.removeItem('geoReports');
 }
 
 (function persistAccessTokenFromQuery() {
@@ -78,10 +78,10 @@ function persistAccessTokenFromResponse(data) {
   return token;
 }
 
-function normalizeOrdersResponse(data) {
+function normalizeReportsResponse(data) {
   const resolved = unwrapApiData(data);
   if (Array.isArray(resolved)) return resolved;
-  if (Array.isArray(resolved?.orders)) return resolved.orders;
+  if (Array.isArray(resolved?.reports)) return resolved.reports;
   if (Array.isArray(resolved?.items)) return resolved.items;
   return [];
 }
@@ -159,9 +159,9 @@ function formatOrderDate(value) {
   return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
 }
 
-function getLocalOrders() {
+function getLocalReports() {
   try {
-    const raw = localStorage.getItem('geoOrders');
+    const raw = localStorage.getItem('geoReports');
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
@@ -170,9 +170,9 @@ function getLocalOrders() {
 }
 
 function saveLocalOrder(order) {
-  const current = getLocalOrders();
+  const current = getLocalReports();
   const next = [order, ...current].slice(0, 50);
-  localStorage.setItem('geoOrders', JSON.stringify(next));
+  localStorage.setItem('geoReports', JSON.stringify(next));
 }
 
 /* ── CUSTOM CURSOR ── */
@@ -1314,27 +1314,27 @@ window.switchTab = switchTab;
    GEO Personal Page — localStorage 의뢰 목록 동적 렌더링
    ============================================================ */
 
-(async function initPersonalOrders() {
+(async function initPersonalReports() {
   const list = document.getElementById('projectList');
   if (!list) return;
 
-  let apiOrders = [];
+  let apiReports = [];
   try {
-    const ordersResponse = await requestJson('/orders');
-    apiOrders = normalizeOrdersResponse(ordersResponse);
+    const reportsResponse = await requestJson('/reports');
+    apiReports = normalizeReportsResponse(reportsResponse);
   } catch (error) {
-    console.error('Failed to load orders:', error);
+    console.error('Failed to load reports:', error);
   }
 
-  const localOrders = getLocalOrders();
+  const localReports = getLocalReports();
   const orderMap = new Map();
-  [...apiOrders, ...localOrders].forEach(order => {
+  [...apiReports, ...localReports].forEach(order => {
     const key = String(order.orderId || order.id || order.targetUrl || Math.random());
     if (!orderMap.has(key)) orderMap.set(key, order);
   });
-  const orders = [...orderMap.values()];
+  const reports = [...orderMap.values()];
 
-  if (orders.length === 0) return;
+  if (reports.length === 0) return;
   list.innerHTML = '';
 
   /* 서비스 유형별 아이콘 */
@@ -1348,7 +1348,7 @@ window.switchTab = switchTab;
     '기타': '🌐',
   };
 
-  orders.forEach(order => {
+  reports.forEach(order => {
     const status = normalizeOrderStatus(order.status || order.jobStatus);
     const orderId = order.orderId || order.id;
     const date = formatOrderDate(order.createdAt || order.date);
@@ -1413,9 +1413,9 @@ window.switchTab = switchTab;
   const totalEl = document.querySelector('.stat-card.c-blue .sc-val');
   const doneEl = document.querySelector('.stat-card.c-green .sc-val');
   const queueEl = document.querySelector('.stat-card.c-orange .sc-val');
-  const totalCount = orders.length;
-  const doneCount = orders.filter(order => normalizeOrderStatus(order.status || order.jobStatus) === 'done').length;
-  const queuedOrProgressCount = orders.filter(order => ['queued', 'progress'].includes(normalizeOrderStatus(order.status || order.jobStatus))).length;
+  const totalCount = reports.length;
+  const doneCount = reports.filter(order => normalizeOrderStatus(order.status || order.jobStatus) === 'done').length;
+  const queuedOrProgressCount = reports.filter(order => ['queued', 'progress'].includes(normalizeOrderStatus(order.status || order.jobStatus))).length;
   if (totalEl) totalEl.textContent = totalCount;
   if (doneEl) doneEl.textContent = doneCount;
   if (queueEl) queueEl.textContent = queuedOrProgressCount;
