@@ -134,5 +134,35 @@
 </div>
 
 <script src="geo-scripts.js"></script>
+<script type="module">
+        import { GeoAPI } from './js/api.js';
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('id');
+
+            if (!orderId) {
+                alert('잘못된 접근입니다. 의뢰 ID가 없습니다.');
+                window.location.href = 'geo-personal.html';
+                return;
+            }
+
+            try {
+                const report = await GeoAPI.getReport(orderId);
+                
+                // 차트 및 데이터 렌더링 함수 호출
+                renderRadarChart(report.scores);
+                renderBarChart(report.scores);
+                renderFeedbacks(report.feedbacks);
+                
+                document.getElementById('jsonLdViewer').textContent = JSON.stringify(report.jsonLd, null, 2);
+            } catch (err) {
+                alert(`리포트를 불러오는 중 오류 발생: ${err.message}`);
+            }
+        });
+
+        function renderRadarChart(scores) { /* 기존 Canvas 렌더링 로직 사용 */ }
+        function renderFeedbacks(feedbacks) { /* 피드백 DOM 생성 로직 사용 */ }
+    </script>
 </body>
 </html>

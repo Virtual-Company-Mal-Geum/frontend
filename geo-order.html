@@ -204,5 +204,28 @@
 </main>
 
 <script src="geo-scripts.js"></script>
+<script type="module">
+        import { GeoAPI } from './js/api.js';
+
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const orderData = {
+                targetUrl: document.getElementById('targetUrl').value,
+                rawHtml: document.getElementById('rawHtml').value,
+                jsonLd: document.getElementById('jsonLd').value,
+                serviceType: document.querySelector('input[name="serviceType"]:checked')?.value || 'BASIC',
+                targetEngines: Array.from(document.querySelectorAll('input[name="engine"]:checked')).map(cb => cb.value)
+            };
+
+            try {
+                const response = await GeoAPI.createOrder(orderData);
+                alert('의뢰가 성공적으로 접수되었습니다!');
+                window.location.href = 'geo-personal.html';
+            } catch (err) {
+                alert(`의뢰 생성 실패: ${err.message}`);
+            }
+        });
+    </script>
 </body>
 </html>
