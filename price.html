@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEO Platform - 요금제 안내</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f4f8fc;
+            --surface-card: #ffffff;
+            --primary-navy: #0a1628;
+            --primary-blue: #0f2447;
+            --accent-blue: #0099ff;
+            --accent-cyan: #00d4ff;
+            --status-mint: #00c896;
+            --text-dark: #121c2d;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* Pricing Section */
+        .pricing-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .pricing-header h1 {
+            font-family: var(--font-display);
+            font-size: 2.75rem;
+            color: var(--primary-navy);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-header p {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+        }
+
+    
+        /* Pricing Cards Grid */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            align-items: stretch;
+        }
+
+        .price-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(10, 22, 40, 0.08);
+        }
+
+        .price-card.popular {
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 8px 20px rgba(0, 153, 255, 0.12);
+        }
+
+        .popular-tag {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: var(--primary-navy);
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .plan-name {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--primary-navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            min-height: 40px;
+        }
+
+        .plan-price {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-navy);
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+
+        .feature-item.disabled {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .check-icon {
+            color: var(--status-mint);
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .btn-plan {
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            text-align: center;
+            border: none;
+            font-family: var(--font-body);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(15, 36, 71, 0.05);
+        }
+
+        .btn-filled {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        .btn-filled:hover {
+            background-color: #0088e6;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="pricing-container">
+        <div class="pricing-header">
+            <h1>비즈니스 성장을 위한 최적의 플랜</h1>
+            <p>AI 엔진 최적화(GEO) 분석 및 리포팅 서비스를 합리적인 요금으로 이용해보세요.</p>
+            
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Basic Plan -->
+            <div class="price-card">
+                <h2 class="plan-name">1</h2>
+                <p class="plan-desc">기본</p>
+                <div class="plan-price">₩00,000 <span>/ 월</span></div>
+                <ul class="feature-list">
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목1</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목2</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목3</li>
+                    <li class="feature-item disabled"><span class="check-icon">✕</span> 지원불가항목4</li>
+                    <li class="feature-item disabled"><span class="check-icon">✕</span> 지원불가항목5</li>
+                </ul>
+                <button type="button" class="btn-plan btn-outline">시작하기</button>
+            </div>
+
+            <!-- Pro Plan (Popular) -->
+            <div class="price-card popular">
+                <div class="popular-tag">Most Popular</div>
+                <h2 class="plan-name">2</h2>
+                <p class="plan-desc">중간</p>
+                <div class="plan-price">₩000,000 <span>/ 월</span></div>
+                <ul class="feature-list">
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목1</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목2</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목3</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목4</li>
+                    <li class="feature-item disabled"><span class="check-icon">✕</span> 항목5</li>
+                </ul>
+                <button type="button" class="btn-plan btn-filled">플랜 선택하기</button>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="price-card">
+                <h2 class="plan-name">3</h2>
+                <p class="plan-desc">비싼거</p>
+                <div class="plan-price">맞춤 문의</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목1</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목2</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목3</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목4</li>
+                    <li class="feature-item"><span class="check-icon">✓</span> 항목5</li>
+                </ul>
+                <button type="button" class="btn-plan btn-outline">문의하기</button>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

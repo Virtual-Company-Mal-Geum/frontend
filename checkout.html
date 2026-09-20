@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEO Platform - 결제하기</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f4f8fc;
+            --surface-card: #ffffff;
+            --primary-navy: #0a1628;
+            --primary-blue: #0f2447;
+            --accent-blue: #0099ff;
+            --accent-cyan: #00d4ff;
+            --status-mint: #00c896;
+            --text-dark: #121c2d;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+    
+
+        .checkout-container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 868px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkout-section {
+            background: var(--surface-card);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            color: var(--primary-navy);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--bg-main);
+            padding-bottom: 0.75rem;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.4rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .font-mono-input {
+            font-family: var(--font-mono) !important;
+            letter-spacing: 1px;
+        }
+
+        /* Payment Method Radio Options */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .method-option {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .method-option.active {
+            border-color: var(--accent-blue);
+            background-color: rgba(0, 153, 255, 0.05);
+            color: var(--accent-blue);
+        }
+
+        /* Order Summary */
+        .summary-card {
+            background: var(--surface-card);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.75rem;
+            height: fit-content;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .summary-item.total {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            color: var(--primary-navy);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .price-badge {
+            font-family: var(--font-mono);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background 0.2s;
+            font-family: var(--font-body);
+        }
+
+        .btn-submit:hover {
+            background-color: #0088e6;
+        }
+
+    </style>
+</head>
+<body>
+
+    <main class="checkout-container">
+        <!-- 결제 정보 입력 영역 -->
+        <div class="checkout-section">
+            <h2 class="section-title">결제 정보 입력</h2>
+            <form id="checkoutForm" onsubmit="return false;">
+                
+                <div class="form-group">
+                    <label>구매자 이메일</label>
+                    <input type="email" placeholder="@" value="@">
+                </div>
+
+                <div class="form-group">
+                    <label>결제 수단 선택</label>
+                    <div class="payment-methods">
+                        <div class="method-option active">신용카드</div>
+                        <div class="method-option">계좌이체</div>
+                        <div class="method-option">간편결제</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>카드 번호</label>
+                    <input type="text" class="font-mono-input" placeholder="0000 - 0000 - 0000 - 0000" maxlength="19">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>유효기간</label>
+                        <input type="text" class="font-mono-input" placeholder="MM / YY" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label>CVC 번호</label>
+                        <input type="text" class="font-mono-input" placeholder="3자리 숫자" maxlength="3">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>카드 소유자명</label>
+                    <input type="text" placeholder="...">
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" checked>
+                        <span>서비스 이용약관 및 정기결제에 동의합니다.</span>
+                    </label>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- 주문 요약 영역 -->
+        <div class="summary-card">
+            <h2 class="section-title">주문 요약</h2>
+            
+            <div class="summary-item">
+                <span>선택 플랜</span>
+                <strong style="color: var(--primary-navy);">Professional Plan</strong>
+            </div>
+            
+            <div class="summary-item">
+                <span>결제 주기</span>
+                <span>월간 결제</span>
+            </div>
+
+            <div class="summary-item total">
+                <span>최종 결제 금액</span>
+                <span class="price-badge" style="color: var(--accent-blue);">₩129,000</span>
+            </div>
+
+            <!-- 빈 버튼 (동작 없음) -->
+            <button type="button" class="btn-submit">129,000원 결제하기</button>
+
+        </div>
+    </main>
+
+</body>
+</html>
