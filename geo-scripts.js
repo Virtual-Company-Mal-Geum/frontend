@@ -487,7 +487,7 @@ async function fetchGeoReport(orderId) {
   const jwtToken = localStorage.getItem('ACCESS_TOKEN');
 
   try {
-    const response = await fetch(`/api/v1/geo/report/${orderId}`, {
+    const response = await fetch(`https://ssonglaptop.taile10591.ts.net/api/v1/geo/report/${orderId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
