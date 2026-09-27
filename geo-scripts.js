@@ -681,17 +681,17 @@ const CATEGORY_ORDER = [
   'Entity Clarity',
   'Answerability',
   'Evidence',
-  'Schema Alignment',
-  'Domain Completeness',
+  'Consistency',
   'Freshness',
+  'Domain Completeness',
 ];
 
 const CATEGORY_LABELS = {
-  'Entity Clarity': '엔티티·주제 명확성',
-  'Answerability': '콘텐츠 구조·답변성',
-  'Evidence': '근거·인용 준비',
-  'Schema Alignment': '스키마-HTML 정렬',
-  'Domain Completeness': '도메인별 완성도',
+  'Entity Clarity': '주제·엔티티 명확성',
+  'Answerability': '답변 가능성·구조',
+  'Evidence': '근거·인용 준비도',
+  'Consistency': '출처 간 일관성',
+  'Domain Completeness': '도메인 정보 완결성',
   'Freshness': '최신성·운영 신뢰',
 };
 
@@ -699,19 +699,49 @@ const CATEGORY_SHORT_LABELS = {
   'Entity Clarity': '엔티티',
   'Answerability': '답변성',
   'Evidence': '근거',
-  'Schema Alignment': '스키마',
-  'Domain Completeness': '완성도',
+  'Consistency': '일관성',
+  'Domain Completeness': '도메인',
   'Freshness': '최신성',
 };
 
 const CATEGORY_MAX = {
   'Entity Clarity': 15,
-  'Answerability': 25,
-  'Evidence': 20,
-  'Schema Alignment': 15,
-  'Domain Completeness': 15,
+  'Answerability': 20,
+  'Evidence': 15,
+  'Consistency': 10,
+  'Domain Completeness': 30,
   'Freshness': 10,
 };
+
+// 백엔드 EvaluationResult 키 → 화면 카테고리 키
+const EVALUATION_KEYS = {
+  entity_topic_clarity: 'Entity Clarity',
+  answerability_content_structure: 'Answerability',
+  evidence_citation_readiness: 'Evidence',
+  cross_source_consistency: 'Consistency',
+  freshness_operational_trust: 'Freshness',
+};
+
+// aiResult.analysis(/diagnose) 또는 aiResult.result(/evaluate)를 화면 형식으로 변환
+function parseEvaluation(evaluation) {
+  const toCategory = (key, item) => ({
+    score: Number(item?.score) || 0,
+    max: CATEGORY_MAX[key],
+    feedback: item?.evidence_summary == null
+      ? '개선안 포함 주문에서 확인할 수 있습니다.'
+      : [item.evidence_summary, ...(item.improvements || []).map(t => '• ' + t)].join('\n'),
+  });
+  const categories = {};
+  for (const [evalKey, key] of Object.entries(EVALUATION_KEYS)) {
+    categories[key] = toCategory(key, evaluation.common_evaluation?.[evalKey]);
+  }
+  categories['Domain Completeness'] = toCategory('Domain Completeness', evaluation.domain_specific_completeness);
+  return {
+    total_score: Number(evaluation.total_score) || 0,
+    max_score: 100,
+    categories,
+  };
+}
 
 function escapeRegex(value) {
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -724,7 +754,7 @@ function normalizeCategoryKey(label) {
   // Evidence는 "Citation Readiness" 표현을 자주 포함하므로 Answerability보다 먼저 매핑합니다.
   if (source.includes('evidence') || source.includes('citation') || source.includes('근거') || source.includes('인용') || source.includes('출처')) return 'Evidence';
   if (source.includes('answer') || source.includes('답변') || source.includes('density')) return 'Answerability';
-  if (source.includes('schema') || source.includes('스키마') || source.includes('semantic') || source.includes('accuracy')) return 'Schema Alignment';
+  if (source.includes('consisten') || source.includes('일관')) return 'Consistency';
   if (source.includes('domain') || source.includes('도메인') || source.includes('completeness')) return 'Domain Completeness';
   if (source.includes('fresh') || source.includes('최신') || source.includes('신뢰') || source.includes('operat')) return 'Freshness';
   return null;
@@ -921,7 +951,7 @@ function renderPage(report) {
     'Entity Clarity': ['kpi-entity-clarity', 'kpi-entity-clarity-bar'],
     'Answerability': ['kpi-answerability', 'kpi-answerability-bar'],
     'Evidence': ['kpi-evidence', 'kpi-evidence-bar'],
-    'Schema Alignment': ['kpi-schema', 'kpi-schema-bar'],
+    'Consistency': ['kpi-schema', 'kpi-schema-bar'],
     'Domain Completeness': ['kpi-domain-completeness', 'kpi-domain-completeness-bar'],
     'Freshness': ['kpi-freshness', 'kpi-freshness-bar'],
   };
@@ -1001,9 +1031,12 @@ function renderPage(report) {
 
     const raw = unwrapApiData(reportResponse);
     const aiPayload = raw?.aiResult || {};
-    const aiText = typeof aiPayload.content === 'string' ? aiPayload.content : '';
-    const parsedAi = parseAiResponse(aiPayload.content ? aiPayload : { content: aiText });
-    const suggestedJsonLd = aiPayload.suggested_json_ld ?? null;
+    const evaluation = aiPayload.analysis ?? aiPayload.result;
+    const parsedAi = evaluation?.common_evaluation
+      ? parseEvaluation(evaluation)
+      : parseAiResponse(aiPayload);
+    const suggestedJsonLd = aiPayload.jsonld?.jsonld ?? aiPayload.suggested_json_ld ?? null;
+    initReevaluation(raw);
     renderPage({
       ...raw,
       suggestedJsonLd,
@@ -1024,6 +1057,51 @@ function renderPage(report) {
     document.getElementById('jsonLdBlock').textContent = '';
   }
 })();
+
+// 재분석 버튼 — 비교 명세 §6.2.2. reevalRemaining이 null이면 재평가 대상이 아닌 주문(개선안 미포함)이다.
+function initReevaluation(report) {
+  const wrap = document.getElementById('reevalWrap');
+  const btn = document.getElementById('reevalBtn');
+  const reasonEl = document.getElementById('reevalReason');
+  const dialog = document.getElementById('reevalDialog');
+  if (!wrap || !btn || !dialog) return;
+
+  const baselineId = report.baselineOrderId ?? report.orderId;
+  const baselineStatus = report.versions?.[0]?.jobStatus ?? report.jobStatus;
+  if (report.reevalRemaining == null || baselineStatus !== 'COMPLETED') return;
+
+  const expiresAt = report.reevalExpiresAt ? new Date(report.reevalExpiresAt) : null;
+  const mmdd = d => `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  const inProgress = (report.versions || []).slice(1)
+    .some(v => v.jobStatus === 'ACCEPTED' || v.jobStatus === 'PROCESSING');
+  const reason =
+    inProgress ? '재평가가 진행 중입니다.' :
+    report.reevalRemaining <= 0 ? '포함된 재평가를 모두 사용했습니다.' :
+    expiresAt && expiresAt <= new Date() ? `재평가 기한(${mmdd(expiresAt)})이 지났습니다.` :
+    '';
+
+  wrap.hidden = false;
+  btn.disabled = Boolean(reason);
+  reasonEl.textContent = reason ||
+    `남은 재평가 ${report.reevalRemaining}회${expiresAt ? ` · ${mmdd(expiresAt)}까지` : ''} · 크레딧 차감 없음`;
+
+  btn.addEventListener('click', () => dialog.showModal());
+  dialog.addEventListener('close', async () => {
+    if (dialog.returnValue !== 'yes') return;
+    btn.disabled = true;
+    try {
+      await requestJson('/order', {
+        method: 'POST',
+        body: JSON.stringify({ baselineOrderId: baselineId }),
+      });
+      alert('재분석 요청이 접수되었습니다.\n분석이 완료되면 마이 대시보드에서 결과를 확인하실 수 있습니다.');
+      window.location.href = 'geo-personal.html';
+    } catch (error) {
+      // 409(진행 중·횟수 초과·기한 만료 등)는 서버 message가 그대로 안내 문구다
+      reasonEl.textContent = error.message || '요청하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    }
+  });
+}
 
 function copyJsonLd() {
   const target = document.getElementById('suggestedJsonLdBlock') || document.getElementById('jsonLdBlock');
@@ -1249,6 +1327,7 @@ window.switchTab = switchTab;
       contactEmail: document.getElementById('contactEmail')?.value,
       contactOrg: document.getElementById('contactOrg')?.value,
       memo: document.getElementById('memo')?.value,
+      withImprovement: document.getElementById('chk6')?.checked === true,
     };
 
     /* localStorage에 의뢰 목록 저장 (대시보드에서 읽음) */
@@ -1260,9 +1339,9 @@ window.switchTab = switchTab;
       submitInfo.innerHTML = `<span class="order-loading-dot" aria-hidden="true"></span><span>${message}</span>`;
     };
 
-    btn.textContent = '분석 중입니다.';
+    btn.textContent = '요청 중입니다.';
     btn.disabled = true;
-    setSubmitInfo('분석 중입니다. 잠시만 기다려 주세요.');
+    setSubmitInfo('주문을 접수하고 있습니다.');
     let isNavigatingToResult = false;
 
     /* 실제 백엔드 연동 시:
@@ -1274,6 +1353,8 @@ window.switchTab = switchTab;
     try {
       const orderResponse = await requestJson('/order', {
         method: 'POST',
+        // 개선안 포함 주문은 크레딧을 예약하므로 중복 접수 방지용 멱등키를 붙인다 (크레딧 명세 §4.2)
+        headers: payload.withImprovement ? { 'Idempotency-Key': crypto.randomUUID() } : {},
         body: JSON.stringify(payload),
       });
       const createdOrder = unwrapApiData(orderResponse);
@@ -1286,9 +1367,9 @@ window.switchTab = switchTab;
         createdAt: createdOrder?.createdAt ?? new Date().toISOString(),
       });
 
-      setSubmitInfo('분석이 완료되었습니다. 결과 페이지로 이동합니다.');
       isNavigatingToResult = true;
-      window.location.href = buildResultPageUrl(orderId);
+      alert('주문이 접수되었습니다.\n분석이 완료되면 마이 대시보드에서 결과를 확인하실 수 있습니다.');
+      window.location.href = 'geo-personal.html';
       return;
     } catch (error) {
       // API 실패 시에도 대시보드에서 목록을 확인할 수 있게 로컬 보관

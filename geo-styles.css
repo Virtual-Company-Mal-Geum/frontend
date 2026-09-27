@@ -2418,3 +2418,22 @@ body.page-order { background: var(--gray-100); min-height: 100vh; }
   .order-submit-wrap { flex-direction: column; align-items: stretch; }
   .order-submit-btn { width: 100%; }
 }
+
+/* 재분석 확인 창 */
+.confirm-dialog {
+  border: none;
+  border-radius: 12px;
+  padding: 28px 32px;
+  max-width: min(400px, calc(100vw - 32px));
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+.confirm-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+.confirm-dialog p { margin: 0 0 8px; font-weight: 600; font-size: 1.05rem; }
+.confirm-dialog .confirm-sub { font-weight: 400; font-size: 0.9rem; color: var(--gray-400); }
+.confirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+.reeval-wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.reeval-wrap[hidden] { display: none; }
+.reeval-wrap .ph-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.reeval-reason { font-size: 0.85rem; color: var(--gray-400); }
+.confirm-dialog .ph-btn:not(.primary) { background: #eef2f7; color: #1a2233; }
+.confirm-dialog .ph-btn:not(.primary):hover { background: #e1e7ef; }

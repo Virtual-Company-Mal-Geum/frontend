@@ -22,7 +22,22 @@
   </div>
 </div>
 
+<dialog class="confirm-dialog" id="reevalDialog">
+  <p>개선이 정말로 완료되셨습니까?</p>
+  <p class="confirm-sub">개선안을 사이트에 적용한 뒤 재분석을 요청해 주세요.</p>
+  <form method="dialog" class="confirm-actions">
+    <button class="ph-btn" value="no">아니오</button>
+    <button class="ph-btn primary" value="yes">예</button>
+  </form>
+</dialog>
+
 <div class="content">
+
+  <!-- 재평가 요청 (비교 명세 §6.2.2) -->
+  <div class="reeval-wrap" id="reevalWrap" hidden>
+    <button class="ph-btn primary" id="reevalBtn" type="button">개선안 적용 완료 → 재평가 요청</button>
+    <span class="reeval-reason" id="reevalReason"></span>
+  </div>
 
   <!-- Meta strip -->
   <div class="meta-strip">
@@ -44,28 +59,28 @@
       <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-total-bar" style="width:0%;background:var(--accent)" data-w="0%"></div></div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">엔티티·주제 명확성</div>
+      <div class="kpi-label">주제·엔티티 명확성</div>
       <div class="kpi-val" id="kpi-entity-clarity">—<span class="kpi-unit">/ 15</span></div>
       <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-entity-clarity-bar" style="width:0%;background:var(--purple)" data-w="0%"></div></div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">콘텐츠 구조·답변성</div>
-      <div class="kpi-val" id="kpi-answerability">—<span class="kpi-unit">/ 25</span></div>
+      <div class="kpi-label">답변 가능성·구조</div>
+      <div class="kpi-val" id="kpi-answerability">—<span class="kpi-unit">/ 20</span></div>
       <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-answerability-bar" style="width:0%;background:var(--orange)" data-w="0%"></div></div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">근거·인용 준비</div>
-      <div class="kpi-val" id="kpi-evidence">—<span class="kpi-unit">/ 20</span></div>
+      <div class="kpi-label">근거·인용 준비도</div>
+      <div class="kpi-val" id="kpi-evidence">—<span class="kpi-unit">/ 15</span></div>
       <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-evidence-bar" style="width:0%;background:var(--green)" data-w="0%"></div></div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">스키마-HTML 정렬</div>
-      <div class="kpi-val" id="kpi-schema">—<span class="kpi-unit">/ 15</span></div>
+      <div class="kpi-label">출처 간 일관성</div>
+      <div class="kpi-val" id="kpi-schema">—<span class="kpi-unit">/ 10</span></div>
       <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-schema-bar" style="width:0%;background:#e53e3e" data-w="0%"></div></div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">도메인별 완성도</div>
-      <div class="kpi-val" id="kpi-domain-completeness">—<span class="kpi-unit">/ 15</span></div>
+      <div class="kpi-label">도메인 정보 완결성</div>
+      <div class="kpi-val" id="kpi-domain-completeness">—<span class="kpi-unit">/ 30</span></div>
       <div class="kpi-bar"><div class="kpi-bar-fill" id="kpi-domain-completeness-bar" style="width:0%;background:#00b5b5" data-w="0%"></div></div>
     </div>
     <div class="kpi-card">
