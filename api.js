@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+const API_ORIGIN = 'https://ssonglaptop.taile10591.ts.net';
+const API_BASE_URL = `${API_ORIGIN}/api/v1`;
 
 // Token Management
 export const getAuthToken = () => localStorage.getItem('accessToken');
@@ -64,7 +65,7 @@ export const AuthAPI = {
     },
     // Google OAuth 로그인 URL 이동
     googleLogin: () => {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+        window.location.href = `${API_ORIGIN}/oauth2/authorization/google`;
     }
 };
 
