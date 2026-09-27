@@ -1309,8 +1309,19 @@ window.switchTab = switchTab;
   const form = document.getElementById('orderForm');
   if (!form) return;
 
+  // 주문 유형 선택 팝업. 'feedback' | 'improve' | ''(취소·Esc)
+  const typeDialog = document.getElementById('orderTypeDialog');
+  const askOrderType = () => new Promise(resolve => {
+    typeDialog.returnValue = '';
+    typeDialog.addEventListener('close', () => resolve(typeDialog.returnValue), { once: true });
+    typeDialog.showModal();
+  });
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
+
+    const orderType = await askOrderType();
+    if (orderType !== 'feedback' && orderType !== 'improve') return;
 
     const today = new Date();
     const dateStr = today.getFullYear() + '.' +
@@ -1328,7 +1339,7 @@ window.switchTab = switchTab;
       contactEmail: document.getElementById('contactEmail')?.value,
       contactOrg: document.getElementById('contactOrg')?.value,
       memo: document.getElementById('memo')?.value,
-      withImprovement: document.getElementById('chk6')?.checked === true,
+      withImprovement: orderType === 'improve',
     };
 
     /* localStorage에 의뢰 목록 저장 (대시보드에서 읽음) */
