@@ -2421,6 +2421,7 @@ body.page-order { background: var(--gray-100); min-height: 100vh; }
 
 /* 재분석 확인 창 */
 .confirm-dialog {
+  margin: auto; /* 전역 * { margin: 0 } 리셋이 dialog 가운데 정렬을 깨서 되돌린다 */
   border: none;
   border-radius: 12px;
   padding: 28px 32px;
@@ -2429,7 +2430,7 @@ body.page-order { background: var(--gray-100); min-height: 100vh; }
 }
 .confirm-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
 .confirm-dialog p { margin: 0 0 8px; font-weight: 600; font-size: 1.05rem; }
-.confirm-dialog .confirm-sub { font-weight: 400; font-size: 0.9rem; color: var(--gray-400); }
+.confirm-dialog .confirm-sub { font-weight: 400; font-size: 0.9rem; color: var(--blue-900); line-height: 1.6; }
 .confirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
 #reevalBtn:disabled { opacity: 0.45; cursor: not-allowed; }
 .confirm-dialog .ph-btn:not(.primary) { background: #eef2f7; color: #1a2233; }
