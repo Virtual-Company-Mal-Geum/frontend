@@ -1058,32 +1058,32 @@ function renderPage(report) {
   }
 })();
 
-// 재분석 버튼 — 비교 명세 §6.2.2. reevalRemaining이 null이면 재평가 대상이 아닌 주문(개선안 미포함)이다.
+// 재평가 버튼 — 비교 명세 §6.2.2. 명세는 대상이 아닌 주문에서 버튼을 숨기지만,
+// 헤더에 항상 두고 비활성화 + 툴팁(title)으로 사유를 보여준다.
 function initReevaluation(report) {
-  const wrap = document.getElementById('reevalWrap');
   const btn = document.getElementById('reevalBtn');
-  const reasonEl = document.getElementById('reevalReason');
   const dialog = document.getElementById('reevalDialog');
-  if (!wrap || !btn || !dialog) return;
+  if (!btn || !dialog) return;
 
   const baselineId = report.baselineOrderId ?? report.orderId;
   const baselineStatus = report.versions?.[0]?.jobStatus ?? report.jobStatus;
-  if (report.reevalRemaining == null || baselineStatus !== 'COMPLETED') return;
-
   const expiresAt = report.reevalExpiresAt ? new Date(report.reevalExpiresAt) : null;
   const mmdd = d => `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
   const inProgress = (report.versions || []).slice(1)
     .some(v => v.jobStatus === 'ACCEPTED' || v.jobStatus === 'PROCESSING');
   const reason =
+    report.reevalRemaining == null ? '개선안 포함 주문만 재평가할 수 있습니다.' :
+    baselineStatus !== 'COMPLETED' ? '분석이 완료된 뒤 재평가할 수 있습니다.' :
     inProgress ? '재평가가 진행 중입니다.' :
     report.reevalRemaining <= 0 ? '포함된 재평가를 모두 사용했습니다.' :
     expiresAt && expiresAt <= new Date() ? `재평가 기한(${mmdd(expiresAt)})이 지났습니다.` :
     '';
 
-  wrap.hidden = false;
+  btn.hidden = false;
   btn.disabled = Boolean(reason);
-  reasonEl.textContent = reason ||
-    `남은 재평가 ${report.reevalRemaining}회${expiresAt ? ` · ${mmdd(expiresAt)}까지` : ''} · 크레딧 차감 없음`;
+  if (!reason) btn.textContent = `재평가 요청 (${report.reevalRemaining}회 남음)`;
+  btn.title = reason ||
+    `개선안 적용 완료 후 재평가를 요청합니다.${expiresAt ? ` ${mmdd(expiresAt)}까지` : ''} · 크레딧 차감 없음`;
 
   btn.addEventListener('click', () => dialog.showModal());
   dialog.addEventListener('close', async () => {
@@ -1098,7 +1098,8 @@ function initReevaluation(report) {
       window.location.href = 'geo-personal.html';
     } catch (error) {
       // 409(진행 중·횟수 초과·기한 만료 등)는 서버 message가 그대로 안내 문구다
-      reasonEl.textContent = error.message || '요청하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+      alert(error.message || '요청하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      btn.disabled = false;
     }
   });
 }
