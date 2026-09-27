@@ -991,18 +991,16 @@ function renderPage(report) {
     </div>`;
   }).join('');
 
-  /* JSON-LD 블록 */
-  try {
-    const rawJsonLd = ai.json_ld ?? ai.suggested_json_ld ?? report.suggestedJsonLd;
-    const parsed = typeof rawJsonLd === 'string' ? JSON.parse(rawJsonLd) : rawJsonLd;
-    document.getElementById('jsonLdBlock').textContent = JSON.stringify(parsed, null, 2);
-  } catch {
-    document.getElementById('jsonLdBlock').textContent = ai.json_ld ?? ai.suggested_json_ld ?? report.suggestedJsonLd ?? '—';
-  }
+  /* JSON-LD 블록 — 현재: 사이트에서 수집한 원본(jsonld_input.record.json_ld), 개선: AI 개선안(jsonld.jsonld) */
+  const current = report.currentJsonLd;
+  const hasCurrent = Array.isArray(current) ? current.length > 0 : Boolean(current);
+  document.getElementById('jsonLdBlock').textContent = hasCurrent
+    ? JSON.stringify(current, null, 2)
+    : '사이트에서 찾은 JSON-LD가 없습니다.';
   const suggestedBlock = document.getElementById('suggestedJsonLdBlock');
   if (suggestedBlock) {
     const suggested = report.suggestedJsonLd ?? ai.suggested_json_ld ?? null;
-    suggestedBlock.textContent = suggested ? JSON.stringify(suggested, null, 2) : 'AI 분석 완료 후 표시됩니다...';
+    suggestedBlock.textContent = suggested ? JSON.stringify(suggested, null, 2) : '개선안 함께 받기로 주문하면 개선된 JSON-LD가 제공됩니다.';
   }
 
   /* 차트 */
@@ -1036,10 +1034,12 @@ function renderPage(report) {
       ? parseEvaluation(evaluation)
       : parseAiResponse(aiPayload);
     const suggestedJsonLd = aiPayload.jsonld?.jsonld ?? aiPayload.suggested_json_ld ?? null;
+    const currentJsonLd = aiPayload.jsonld_input?.record?.json_ld ?? null;
     initReevaluation(raw);
     renderPage({
       ...raw,
       suggestedJsonLd,
+      currentJsonLd,
       aiResult: {
         ...parsedAi,
         suggested_json_ld: suggestedJsonLd
