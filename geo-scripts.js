@@ -1516,3 +1516,29 @@ window.switchTab = switchTab;
   /* page-info 업데이트 */
   updatePageInfo();
 })();
+
+/* ============================================================
+   GEO Account Page — GET /profile 로 계정 정보 채우기
+   ============================================================ */
+(async function initAccountPage() {
+  if (!document.body.classList.contains('page-account')) return;
+  try {
+    const profile = unwrapApiData(await requestJson('/profile'));
+    const name = profile.name || '회원';
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+    setText('profileName', name);
+    setText('displayUserName', name);
+    setText('profileAvatar', name.charAt(0));
+    setText('profileEmail', profile.email || '');
+    setText('infoEmail', profile.email || '');
+    setText('infoPhone', profile.phone || '미입력');
+    setText('planName', profile.plan || '—');
+    document.querySelectorAll('.sidebar .user-name').forEach(el => { el.textContent = name; });
+    document.querySelectorAll('.sidebar .user-avatar').forEach(el => { el.textContent = name.charAt(0); });
+  } catch (error) {
+    console.error('Failed to load profile:', error);
+  }
+})();
