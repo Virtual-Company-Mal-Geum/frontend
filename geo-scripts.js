@@ -1518,10 +1518,11 @@ window.switchTab = switchTab;
 })();
 
 /* ============================================================
-   GEO Account Page — GET /profile 로 계정 정보 채우기
+   사이드바가 있는 페이지 공통 — GET /profile 로 사용자 이름 채우기
+   (계정 설정 페이지는 상세 정보까지 채운다)
    ============================================================ */
-(async function initAccountPage() {
-  if (!document.body.classList.contains('page-account')) return;
+(async function initProfile() {
+  if (!document.querySelector('.sidebar')) return;
   try {
     const profile = unwrapApiData(await requestJson('/profile'));
     const name = profile.name || '회원';
@@ -1536,6 +1537,7 @@ window.switchTab = switchTab;
     setText('infoEmail', profile.email || '');
     setText('infoPhone', profile.phone || '미입력');
     setText('planName', profile.plan || '—');
+    setText('greetName', name);
     document.querySelectorAll('.sidebar .user-name').forEach(el => { el.textContent = name; });
     document.querySelectorAll('.sidebar .user-avatar').forEach(el => { el.textContent = name.charAt(0); });
   } catch (error) {
