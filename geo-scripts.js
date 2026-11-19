@@ -1317,11 +1317,38 @@ window.switchTab = switchTab;
     typeDialog.showModal();
   });
 
+  const sourceSelect = document.getElementById('improvementSource');
+  let sourcesLoaded = false;
+  const loadPricing = async () => {
+    const profile = unwrapApiData(await requestJson('/profile'));
+    const pricing = profile.pricing;
+    if (!pricing) throw new Error('이용권 정보를 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.');
+    const sourceLabels = { PACK: 'Pack 크레딧', PARTNER: 'Partner 학원 한도' };
+    sourceSelect.replaceChildren(new Option('이용권을 선택해 주세요', ''));
+    (pricing.availableImprovementSources || []).forEach(source => {
+      if (sourceLabels[source]) sourceSelect.add(new Option(sourceLabels[source], source));
+    });
+    if (sourceSelect.options.length === 2) sourceSelect.selectedIndex = 1;
+    const allowance = pricing.scanAllowance;
+    document.getElementById('scanAllowanceInfo').textContent = allowance.unlimited
+      ? '현재 일반 분석은 횟수 제한 없이 이용할 수 있습니다.'
+      : `이번 달 무료 일반 분석 ${allowance.remaining}회 남음 (월 ${allowance.monthlyLimit}회)`;
+    sourcesLoaded = true;
+  };
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
 
+    if (!sourcesLoaded) {
+      try { await loadPricing(); }
+      catch (error) { alert(error.message); return; }
+    }
     const orderType = await askOrderType();
     if (orderType !== 'feedback' && orderType !== 'improve') return;
+    if (orderType === 'improve' && !sourceSelect.value) {
+      alert('개선안에 사용할 Pack 또는 Partner 이용권을 선택해 주세요.');
+      return;
+    }
 
     const today = new Date();
     const dateStr = today.getFullYear() + '.' +
@@ -1340,6 +1367,7 @@ window.switchTab = switchTab;
       contactOrg: document.getElementById('contactOrg')?.value,
       memo: document.getElementById('memo')?.value,
       withImprovement: orderType === 'improve',
+      improvementSource: orderType === 'improve' ? sourceSelect.value : null,
     };
 
     /* localStorage에 의뢰 목록 저장 (대시보드에서 읽음) */
@@ -1384,13 +1412,7 @@ window.switchTab = switchTab;
       window.location.href = 'geo-personal.html';
       return;
     } catch (error) {
-      // API 실패 시에도 대시보드에서 목록을 확인할 수 있게 로컬 보관
-      saveLocalOrder({
-        ...payload,
-        orderId: `local-${Date.now()}`,
-        status: 'queued',
-        createdAt: new Date().toISOString(),
-      });
+      sourcesLoaded = false;
       alert(error.message || ' 주문 요청에 실패했습니다.');
       setSubmitInfo('주문 요청에 실패했습니다. 입력 내용을 확인한 뒤 다시 시도해 주세요.');
     } finally {
@@ -1536,10 +1558,26 @@ window.switchTab = switchTab;
     setText('profileEmail', profile.email || '');
     setText('infoEmail', profile.email || '');
     setText('infoPhone', profile.phone || '미입력');
-    setText('planName', profile.plan || '—');
+    const pricing = profile.pricing;
+    const planLabel = pricing?.partnerTier
+      || { FREE: '무료', PACK: 'Pack', PARTNER: 'Partner' }[pricing?.mode]
+      || '—';
+    setText('planName', planLabel);
+    const allowance = pricing?.scanAllowance;
+    if (allowance) {
+      setText('usageText', allowance.unlimited ? '무제한'
+        : `${allowance.freeScanUsedCount} / ${allowance.monthlyLimit}회 · ${allowance.remaining}회 남음`);
+      const bar = document.getElementById('scanUsageBar');
+      if (bar) {
+        bar.parentElement.hidden = allowance.unlimited;
+        bar.style.width = allowance.unlimited ? '0%'
+          : `${Math.min(100, allowance.freeScanUsedCount / allowance.monthlyLimit * 100)}%`;
+      }
+    }
     setText('greetName', name);
     document.querySelectorAll('.sidebar .user-name').forEach(el => { el.textContent = name; });
     document.querySelectorAll('.sidebar .user-avatar').forEach(el => { el.textContent = name.charAt(0); });
+    document.querySelectorAll('.sidebar .user-plan').forEach(el => { el.textContent = planLabel; });
   } catch (error) {
     console.error('Failed to load profile:', error);
   }
